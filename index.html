@@ -1185,10 +1185,10 @@ content:answer
 
 }catch(error){
 
-thinking.textContent=
-"❌ AI connection failed.";
+  thinking.textContent=
+    "❌ AI error: " + error.message;
 
-console.error(error);
+  console.error(error);
 
 }
 
