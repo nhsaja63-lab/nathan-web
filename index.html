@@ -2,3 +2,719 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nathan's Website</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+}
+
+header {
+    text-align: center;
+    padding: 35px 15px 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 900;
+}
+
+.warning {
+    margin-top: 12px;
+    color: #ffd166;
+    font-size: 15px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.search {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    outline: none;
+    border-radius: 14px;
+    background: #171c2b;
+    color: white;
+    font-size: 17px;
+}
+
+.buttons,
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+button {
+    border: 0;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: #20273a;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #5865f2;
+}
+
+.stats {
+    text-align: center;
+    color: #9ba5bd;
+    margin: 20px 0;
+}
+
+#games {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.card {
+    background: #151a27;
+    border: 1px solid #262d42;
+    border-radius: 15px;
+    padding: 17px;
+    min-height: 155px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: .15s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #5865f2;
+}
+
+.card h2 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.source {
+    color: #8e99b4;
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+.play {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 9px;
+    background: #5865f2;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.play:hover {
+    background: #707aff;
+}
+
+#loadMore {
+    display: block;
+    margin: 25px auto 50px;
+}
+
+footer {
+    text-align: center;
+    color: #687187;
+    padding: 30px;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 30px;
+    }
+
+    #games {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .card h2 {
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎮 NATHAN'S WEBSITE</h1>
+
+    <div class="warning">
+        ⚠️ Some games and websites may be blocked on your network.
+    </div>
+</header>
+
+<div class="container">
+
+    <input
+        id="search"
+        class="search"
+        type="text"
+        placeholder="🔎 Search games and websites..."
+    >
+
+    <div class="buttons">
+        <button onclick="randomGame()">🎲 RANDOM</button>
+        <button onclick="bored()">😴 I'M BORED</button>
+        <button onclick="showAll()">🎮 ALL</button>
+    </div>
+
+    <div class="categories">
+        <button onclick="filterCategory('All')">All</button>
+        <button onclick="filterCategory('Action')">⚔️ Action</button>
+        <button onclick="filterCategory('Racing')">🏎️ Racing</button>
+        <button onclick="filterCategory('Shooting')">🔫 Shooting</button>
+        <button onclick="filterCategory('Horror')">👻 Horror</button>
+        <button onclick="filterCategory('Puzzle')">🧩 Puzzle</button>
+        <button onclick="filterCategory('Sports')">⚽ Sports</button>
+        <button onclick="filterCategory('IO')">🌐 .IO</button>
+        <button onclick="filterCategory('Multiplayer')">👥 Multiplayer</button>
+        <button onclick="filterCategory('Creative')">🎨 Creative</button>
+        <button onclick="filterCategory('Fun')">🤪 Fun</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div id="games"></div>
+
+    <button id="loadMore" onclick="loadMore()">LOAD MORE</button>
+
+</div>
+
+<footer>
+    Nathan's Website 🎮
+</footer>
+
+<script>
+
+/*
+====================================================
+NATHAN'S WEBSITE
+REAL GAME / WEBSITE DATABASE
+====================================================
+*/
+
+const games = [
+
+/* ---------- IO GAMES ---------- */
+
+["Agar.io","https://agar.io/","IO"],
+["Slither.io","https://slither.io/","IO"],
+["Diep.io","https://diep.io/","IO"],
+["Krunker","https://krunker.io/","Shooting"],
+["Shell Shockers","https://shellshock.io/","Shooting"],
+["ZombsRoyale.io","https://zombsroyale.io/","IO"],
+["Venge.io","https://venge.io/","Shooting"],
+["Zombs.io","https://zombs.io/","IO"],
+["Paper.io 2","https://paper-io.com/","IO"],
+["Hole.io","https://hole-io.com/","IO"],
+["Little Big Snake","https://littlebigsnake.com/","IO"],
+["Bonk.io","https://bonk.io/","IO"],
+["Surviv.io","https://surviv.io/","IO"],
+["Mope.io","https://mope.io/","IO"],
+["Gats.io","https://gats.io/","IO"],
+["Brutal.io","https://brutal.io/","IO"],
+["Powerline.io","https://powerline.io/","IO"],
+["Wormate.io","https://wormate.io/","IO"],
+["Starve.io","https://starve.io/","IO"],
+["Deeeep.io","https://deeeep.io/","IO"],
+["Florr.io","https://florr.io/","IO"],
+["Moomoo.io","https://moomoo.io/","IO"],
+["Taming.io","https://taming.io/","IO"],
+["Survev.io","https://survev.io/","IO"],
+["Hordes.io","https://hordes.io/","IO"],
+["Ev.io","https://ev.io/","Shooting"],
+["Mini Royale: Nations","https://miniroyale.io/","Shooting"],
+["Kirka.io","https://kirka.io/","Shooting"],
+["Narrow.One","https://narrow.one/","Shooting"],
+["1v1.LOL","https://1v1.lol/","Shooting"],
+
+/* ---------- FUN WEBSITES ---------- */
+
+["Neal.fun","https://neal.fun/","Fun"],
+["Infinite Craft","https://neal.fun/infinite-craft/","Fun"],
+["The Password Game","https://neal.fun/password-game/","Puzzle"],
+["Stimulation Clicker","https://neal.fun/stimulation-clicker/","Fun"],
+["Space Elevator","https://neal.fun/space-elevator/","Fun"],
+["Deep Sea","https://neal.fun/deep-sea/","Fun"],
+["The Useless Web","https://theuselessweb.com/","Fun"],
+["Pointer Pointer","https://pointerpointer.com/","Fun"],
+["Bored Button","https://www.boredbutton.com/","Fun"],
+["Radio Garden","https://radio.garden/","Fun"],
+["Window Swap","https://www.window-swap.com/","Fun"],
+["Patatap","https://patatap.com/","Creative"],
+["Chrome Music Lab","https://musiclab.chromeexperiments.com/","Creative"],
+["Quick Draw","https://quickdraw.withgoogle.com/","Creative"],
+["AutoDraw","https://www.autodraw.com/","Creative"],
+["Chrome Experiments","https://experiments.withgoogle.com/","Creative"],
+["Human Benchmark","https://humanbenchmark.com/","Puzzle"],
+["Skribbl.io","https://skribbl.io/","Multiplayer"],
+["Gartic Phone","https://garticphone.com/","Multiplayer"],
+["GeoGuessr","https://www.geoguessr.com/","Fun"],
+["Google Earth","https://earth.google.com/","Fun"],
+["Photopea","https://www.photopea.com/","Creative"],
+["Sketchpad","https://sketch.io/sketchpad/","Creative"],
+
+/* ---------- GAME HUBS ---------- */
+
+["Poki","https://poki.com/","Fun"],
+["CrazyGames","https://www.crazygames.com/","Fun"],
+["Y8","https://www.y8.com/","Fun"],
+["Addicting Games","https://www.addictinggames.com/","Fun"],
+["Newgrounds Games","https://www.newgrounds.com/games","Fun"],
+["itch.io Games","https://itch.io/games","Fun"],
+["Game Jolt","https://gamejolt.com/games","Fun"],
+["Armor Games","https://armorgames.com/","Fun"],
+["Kongregate","https://www.kongregate.com/","Fun"],
+["Miniclip","https://www.miniclip.com/","Fun"],
+["Friv","https://www.friv.com/","Fun"],
+["Kizi","https://kizi.com/","Fun"],
+
+/* ---------- CLASSIC GAMES ---------- */
+
+["Tetris","https://tetris.com/play-tetris","Puzzle"],
+["Chess","https://www.chess.com/play","Puzzle"],
+["Lichess","https://lichess.org/","Puzzle"],
+["2048","https://play2048.co/","Puzzle"],
+["Cookie Clicker","https://orteil.dashnet.org/cookieclicker/","Fun"],
+["A Dark Room","https://adarkroom.doublespeakgames.com/","Fun"],
+["Little Alchemy","https://littlealchemy.com/","Puzzle"],
+["Little Alchemy 2","https://littlealchemy2.com/","Puzzle"],
+["Universal Paperclips","https://www.decisionproblem.com/paperclips/","Fun"],
+["World's Hardest Game","https://www.coolmathgames.com/0-worlds-hardest-game","Puzzle"],
+["Run 3","https://www.coolmathgames.com/0-run-3","Action"],
+["Fireboy and Watergirl","https://www.coolmathgames.com/0-fireboy-and-water-girl-forest-temple","Puzzle"],
+["Papa's Pizzeria","https://www.coolmathgames.com/0-papas-pizzeria","Fun"],
+["Action Turnip","https://www.coolmathgames.com/","Action"],
+["Moto X3M","https://www.coolmathgames.com/0-moto-x3m","Racing"],
+["Bob the Robber","https://www.coolmathgames.com/0-bob-the-robber","Action"],
+["Stickman Hook","https://www.coolmathgames.com/0-stickman-hook","Action"],
+["Vex 3","https://www.coolmathgames.com/0-vex-3","Action"],
+["Vex 4","https://www.coolmathgames.com/0-vex-4","Action"],
+["Vex 5","https://www.coolmathgames.com/0-vex-5","Action"],
+["Vex 6","https://www.coolmathgames.com/0-vex-6","Action"],
+["Vex 7","https://www.coolmathgames.com/0-vex-7","Action"],
+["Basketball Stars","https://www.crazygames.com/game/basketball-stars","Sports"],
+["Soccer Random","https://www.crazygames.com/game/soccer-random","Sports"],
+["Football Masters","https://www.crazygames.com/","Sports"],
+["Drift Hunters","https://www.crazygames.com/game/drift-hunters","Racing"],
+["Madalin Stunt Cars 2","https://www.crazygames.com/game/madalin-stunt-cars-2","Racing"],
+["Super Star Car","https://www.crazygames.com/","Racing"],
+["House of Hazards","https://www.crazygames.com/game/house-of-hazards","Fun"],
+["Action Games","https://www.crazygames.com/c/action","Action"],
+["Racing Games","https://www.crazygames.com/c/racing","Racing"],
+["Shooting Games","https://www.crazygames.com/c/shooting","Shooting"],
+["Horror Games","https://www.crazygames.com/c/horror","Horror"],
+["Puzzle Games","https://www.crazygames.com/c/puzzle","Puzzle"],
+["Sports Games","https://www.crazygames.com/c/sports","Sports"],
+
+/* ---------- MORE REAL DESTINATIONS ---------- */
+
+["Google Snake","https://www.google.com/search?q=snake+game","Fun"],
+["Google Pac-Man","https://www.google.com/search?q=play+pacman","Fun"],
+["Google Solitaire","https://www.google.com/search?q=solitaire","Puzzle"],
+["Google Minesweeper","https://www.google.com/search?q=minesweeper","Puzzle"],
+["Google Tic Tac Toe","https://www.google.com/search?q=tic+tac+toe","Puzzle"],
+["Google Doodle Games","https://doodles.google/","Fun"],
+["Quick Draw","https://quickdraw.withgoogle.com/","Creative"],
+["Blob Opera","https://artsandculture.google.com/experiment/blob-opera/AAHWrq360NcGbw","Creative"],
+["Chrome Dino","https://chromedino.com/","Action"],
+["Pac-Man","https://www.pacman.com/","Action"],
+["National Geographic Kids Games","https://kids.nationalgeographic.com/games","Fun"],
+["NASA Games","https://www.nasa.gov/games/","Fun"],
+["Smithsonian Games","https://www.si.edu/kids","Fun"],
+["Funbrain","https://www.funbrain.com/games","Fun"],
+["ABCya Games","https://www.abcya.com/games","Puzzle"],
+["Coolmath Games","https://www.coolmathgames.com/","Fun"],
+["Coolmath 2","https://www.coolmathgames.com/","Fun"],
+["Math Playground","https://www.mathplayground.com/","Puzzle"],
+["Arcademics","https://www.arcademics.com/games","Puzzle"],
+["PBS Kids Games","https://pbskids.org/games/","Fun"],
+["Nickelodeon Games","https://www.nick.com/games","Fun"],
+
+/* ---------- MORE IO / BROWSER GAMES ---------- */
+
+["Agar.io","https://agar.io/","IO"],
+["Slither.io","https://slither.io/","IO"],
+["Diep.io","https://diep.io/","IO"],
+["Mope.io","https://mope.io/","IO"],
+["Moomoo.io","https://moomoo.io/","IO"],
+["Zombs.io","https://zombs.io/","IO"],
+["ZombsRoyale","https://zombsroyale.io/","IO"],
+["Krunker.io","https://krunker.io/","Shooting"],
+["Shell Shockers","https://shellshock.io/","Shooting"],
+["Venge.io","https://venge.io/","Shooting"],
+["Ev.io","https://ev.io/","Shooting"],
+["Kirka.io","https://kirka.io/","Shooting"],
+["Narrow.One","https://narrow.one/","Shooting"],
+["Bonk.io","https://bonk.io/","Multiplayer"],
+["Gats.io","https://gats.io/","Shooting"],
+["Brutal.io","https://brutal.io/","IO"],
+["Powerline.io","https://powerline.io/","IO"],
+["Wormate.io","https://wormate.io/","IO"],
+["Starve.io","https://starve.io/","IO"],
+["Deeeep.io","https://deeeep.io/","IO"],
+["Florr.io","https://florr.io/","IO"],
+["Taming.io","https://taming.io/","IO"],
+["Hordes.io","https://hordes.io/","IO"],
+["Survev.io","https://survev.io/","IO"],
+["Paper.io","https://paper-io.com/","IO"],
+["Hole.io","https://hole-io.com/","IO"],
+["Little Big Snake","https://littlebigsnake.com/","IO"],
+
+/* ---------- EXTRA FUN ---------- */
+
+["Falling Sand","https://sandspiel.club/","Creative"],
+["Weave Silk","https://weavesilk.com/","Creative"],
+["Silk – Interactive Generative Art","https://silk.weavesilk.com/","Creative"],
+["This Is Sand","https://thisissand.com/","Creative"],
+["Zoomquilt","https://zoomquilt.org/","Fun"],
+["Radiooooo","https://radiooooo.com/","Music"],
+["A Soft Murmur","https://asoftmurmur.com/","Music"],
+["Noisli","https://www.noisli.com/","Music"],
+["MyNoise","https://mynoise.net/","Music"],
+["Virtual Piano","https://virtualpiano.net/","Music"],
+["Incredibox","https://www.incredibox.com/","Music"],
+["TypingClub","https://www.typingclub.com/","Puzzle"],
+["TypeRacer","https://play.typeracer.com/","Multiplayer"],
+["10FastFingers","https://10fastfingers.com/typing-test/english","Puzzle"],
+["JetPunk","https://www.jetpunk.com/","Puzzle"],
+["Sporcle","https://www.sporcle.com/","Puzzle"],
+["Seterra","https://www.geoguessr.com/seterra","Puzzle"],
+["Flightradar24","https://www.flightradar24.com/","Fun"],
+["Windy","https://www.windy.com/","Fun"],
+["Earth Nullschool","https://earth.nullschool.net/","Fun"],
+["Radio Garden","https://radio.garden/","Music"],
+
+/* ---------- HORROR ---------- */
+
+["Scary Maze","https://www.coolmathgames.com/","Horror"],
+["Horror Games","https://www.crazygames.com/c/horror","Horror"],
+["Horror Games on itch.io","https://itch.io/games/genre-horror","Horror"],
+["Horror Games on Newgrounds","https://www.newgrounds.com/games","Horror"],
+
+/* ---------- CREATIVE ---------- */
+
+["Pixlr","https://pixlr.com/","Creative"],
+["Canva","https://www.canva.com/","Creative"],
+["Figma","https://www.figma.com/","Creative"],
+["Kleki","https://kleki.com/","Creative"],
+["Aggie.io","https://aggie.io/","Creative"],
+["Magma","https://magma.com/","Creative"],
+["JS Paint","https://jspaint.app/","Creative"],
+["Photopea","https://www.photopea.com/","Creative"],
+["Sketchpad","https://sketch.io/sketchpad/","Creative"],
+["MakeCode Arcade","https://arcade.makecode.com/","Creative"],
+["Scratch","https://scratch.mit.edu/","Creative"],
+["Construct","https://editor.construct.net/","Creative"],
+
+/* ---------- MULTIPLAYER ---------- */
+
+["Chess.com","https://www.chess.com/play","Multiplayer"],
+["Lichess","https://lichess.org/","Multiplayer"],
+["Skribbl.io","https://skribbl.io/","Multiplayer"],
+["Gartic Phone","https://garticphone.com/","Multiplayer"],
+["Shell Shockers","https://shellshock.io/","Multiplayer"],
+["Krunker","https://krunker.io/","Multiplayer"],
+["Agar.io","https://agar.io/","Multiplayer"],
+["Slither.io","https://slither.io/","Multiplayer"],
+["Bonk.io","https://bonk.io/","Multiplayer"],
+["MooMoo.io","https://moomoo.io/","Multiplayer"]
+
+];
+
+
+/*
+====================================================
+BUILD DATABASE
+====================================================
+*/
+
+let database = games.map((game, index) => ({
+    id: index,
+    name: game[0],
+    url: game[1],
+    category: game[2]
+}));
+
+let filtered = [...database];
+
+let currentIndex = 0;
+
+const amount = 60;
+
+
+/*
+====================================================
+DISPLAY
+====================================================
+*/
+
+function displayGames() {
+
+    const container =
+        document.getElementById("games");
+
+    container.innerHTML = "";
+
+    currentIndex = 0;
+
+    loadMore();
+}
+
+
+function loadMore() {
+
+    const container =
+        document.getElementById("games");
+
+    const end =
+        Math.min(
+            currentIndex + amount,
+            filtered.length
+        );
+
+    for (
+        let i = currentIndex;
+        i < end;
+        i++
+    ) {
+
+        const game = filtered[i];
+
+        const card =
+            document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <div>
+                <h2>${escapeHTML(game.name)}</h2>
+
+                <div class="source">
+                    ${escapeHTML(game.category)}
+                </div>
+            </div>
+
+            <a
+                class="play"
+                href="${game.url}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                PLAY
+            </a>
+        `;
+
+        container.appendChild(card);
+    }
+
+    currentIndex = end;
+
+    document.getElementById("loadMore").style.display =
+        currentIndex >= filtered.length
+            ? "none"
+            : "block";
+
+    updateStats();
+}
+
+
+/*
+====================================================
+SEARCH
+====================================================
+*/
+
+document
+.getElementById("search")
+.addEventListener("input", function() {
+
+    const search =
+        this.value
+        .toLowerCase()
+        .trim();
+
+    filtered =
+        database.filter(game =>
+            game.name
+            .toLowerCase()
+            .includes(search)
+        );
+
+    displayGames();
+});
+
+
+/*
+====================================================
+CATEGORY
+====================================================
+*/
+
+function filterCategory(category) {
+
+    if (category === "All") {
+
+        filtered = [...database];
+
+    } else {
+
+        filtered =
+            database.filter(game =>
+                game.category === category
+            );
+    }
+
+    document.getElementById("search").value = "";
+
+    displayGames();
+}
+
+
+/*
+====================================================
+ALL
+====================================================
+*/
+
+function showAll() {
+
+    filtered = [...database];
+
+    document.getElementById("search").value = "";
+
+    displayGames();
+}
+
+
+/*
+====================================================
+RANDOM
+====================================================
+*/
+
+function randomGame() {
+
+    if (database.length === 0) return;
+
+    const random =
+        database[
+            Math.floor(
+                Math.random() *
+                database.length
+            )
+        ];
+
+    window.open(
+        random.url,
+        "_blank"
+    );
+}
+
+
+function bored() {
+    randomGame();
+}
+
+
+/*
+====================================================
+STATS
+====================================================
+*/
+
+function updateStats() {
+
+    document.getElementById("stats").textContent =
+        `${filtered.length} games & websites`;
+}
+
+
+/*
+====================================================
+SECURITY
+====================================================
+*/
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/*
+====================================================
+KEYBOARD SHORTCUTS
+====================================================
+*/
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "/" &&
+        document.activeElement.tagName !== "INPUT"
+    ) {
+
+        event.preventDefault();
+
+        document
+        .getElementById("search")
+        .focus();
+    }
+
+    if (
+        event.key.toLowerCase() === "r" &&
+        document.activeElement.tagName !== "INPUT"
+    ) {
+
+        randomGame();
+    }
+
+});
+
+
+/*
+====================================================
+START
+====================================================
+*/
+
+displayGames();
+
+</script>
+
+</body>
+</html>
