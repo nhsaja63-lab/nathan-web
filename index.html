@@ -1,152 +1,93 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import json
 import time
-from urllib.parse import urljoin, urlparse
 
-MAX_GAMES = 45000
+MAX_GAMES = 1000
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 NathanWebsiteGameCatalog/1.0"
+    "User-Agent": "Mozilla/5.0"
 }
 
-games = {}
-session = requests.Session()
-session.headers.update(HEADERS)
+games = []
+seen = set()
 
 
-def add_game(name, url, source):
+def add_game(name, url, source, category="Fun"):
     if not name or not url:
         return
 
     url = url.split("#")[0]
 
-    if url.startswith("//"):
-        url = "https:" + url
+    if url in seen:
+        return
 
     if not url.startswith("http"):
         return
 
-    if url in games:
-        return
+    seen.add(url)
 
-    games[url] = {
+    games.append({
         "name": name.strip(),
         "url": url,
-        "source": source
-    }
+        "source": source,
+        "category": category
+    })
 
-    print(len(games), name[:80])
 
-
-def get(url):
+def get_page(url):
     try:
-        r = session.get(url, timeout=20)
-
+        r = requests.get(url, headers=HEADERS, timeout=15)
         if r.status_code == 200:
             return r.text
-
-    except Exception as e:
-        print("ERROR:", url, e)
+    except:
+        pass
 
     return ""
 
 
-# ============================================================
-# POKI
-# ============================================================
-
-print("\n--- POKI ---")
-
-for page in range(1, 20):
-
-    if len(games) >= MAX_GAMES:
-        break
-
-    if page == 1:
-        url = "https://poki.com/en/all-games"
-    else:
-        url = f"https://poki.com/en/all-games?page={page}"
-
-    html = get(url)
-
-    if not html:
-        continue
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    for a in soup.find_all("a", href=True):
-
-        href = a["href"]
-
-        text = a.get_text(" ", strip=True)
-
-        if "/en/g/" in href and text:
-
-            add_game(
-                text,
-                urljoin("https://poki.com", href),
-                "Poki"
-            )
-
-            if len(games) >= MAX_GAMES:
-                break
-
-    time.sleep(.5)
-
-
-# ============================================================
+# --------------------------------------------------
 # ADDICTING GAMES
-# ============================================================
+# --------------------------------------------------
 
-print("\n--- ADDICTING GAMES ---")
+print("Getting Addicting Games...")
 
 url = "https://www.addictinggames.com/all-games"
-
-html = get(url)
+html = get_page(url)
 
 if html:
-
     soup = BeautifulSoup(html, "html.parser")
 
     for a in soup.find_all("a", href=True):
+        href = urljoin(url, a["href"])
+        name = a.get_text(" ", strip=True)
 
-        href = a["href"]
-
-        text = a.get_text(" ", strip=True)
-
-        if "/game/" in href and text:
-
+        if "/game/" in href and name:
             add_game(
-                text,
-                urljoin(
-                    "https://www.addictinggames.com",
-                    href
-                ),
-                "Addicting Games"
+                name,
+                href,
+                "Addicting Games",
+                "Fun"
             )
 
             if len(games) >= MAX_GAMES:
                 break
 
 
-# ============================================================
+# --------------------------------------------------
 # NEWGROUNDS
-# ============================================================
+# --------------------------------------------------
 
-print("\n--- NEWGROUNDS ---")
+print("Getting Newgrounds...")
 
-for page in range(1, 101):
+for page in range(1, 30):
 
     if len(games) >= MAX_GAMES:
         break
 
-    url = (
-        "https://www.newgrounds.com/games"
-        f"?page={page}"
-    )
-
-    html = get(url)
+    url = f"https://www.newgrounds.com/games/browse/{page}"
+    html = get_page(url)
 
     if not html:
         continue
@@ -155,105 +96,37 @@ for page in range(1, 101):
 
     for a in soup.find_all("a", href=True):
 
-        href = a["href"]
+        href = urljoin(url, a["href"])
+        name = a.get_text(" ", strip=True)
 
-        text = a.get_text(" ", strip=True)
-
-        if "/portal/view/" in href and text:
+        if "/portal/view/" in href and name:
 
             add_game(
-                text,
-                urljoin(
-                    "https://www.newgrounds.com",
-                    href
-                ),
-                "Newgrounds"
+                name,
+                href,
+                "Newgrounds",
+                "Fun"
             )
 
             if len(games) >= MAX_GAMES:
                 break
 
-    time.sleep(.5)
+    time.sleep(.2)
 
 
-# ============================================================
-# ITCH.IO HTML5
-# ============================================================
-
-print("\n--- ITCH.IO ---")
-
-# itch.io has a very large HTML5 catalog.
-# Each result page contains individual game links.
-
-for page in range(1, 1001):
-
-    if len(games) >= MAX_GAMES:
-        break
-
-    url = (
-        "https://itch.io/games/html5"
-        f"?page={page}"
-    )
-
-    html = get(url)
-
-    if not html:
-        continue
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    for a in soup.find_all("a", href=True):
-
-        href = a["href"]
-
-        text = a.get_text(" ", strip=True)
-
-        if not text:
-            continue
-
-        parsed = urlparse(href)
-
-        if parsed.netloc != "itch.io":
-            continue
-
-        # Individual itch game pages normally look like:
-        # https://developer.itch.io/game-name
-
-        if href.startswith("https://"):
-
-            if "/games/" not in href:
-
-                add_game(
-                    text,
-                    href,
-                    "itch.io"
-                )
-
-        if len(games) >= MAX_GAMES:
-            break
-
-    print(
-        f"itch page {page} -> "
-        f"{len(games)} total games"
-    )
-
-    time.sleep(.4)
-
-
-# ============================================================
+# --------------------------------------------------
 # Y8
-# ============================================================
+# --------------------------------------------------
 
-print("\n--- Y8 ---")
+print("Getting Y8...")
 
-for page in range(1, 501):
+for page in range(1, 40):
 
     if len(games) >= MAX_GAMES:
         break
 
     url = f"https://www.y8.com/?page={page}"
-
-    html = get(url)
+    html = get_page(url)
 
     if not html:
         continue
@@ -262,224 +135,148 @@ for page in range(1, 501):
 
     for a in soup.find_all("a", href=True):
 
-        href = a["href"]
+        href = urljoin(url, a["href"])
+        name = a.get_text(" ", strip=True)
 
-        text = a.get_text(" ", strip=True)
-
-        if not text:
-            continue
-
-        if href.startswith("/games/"):
+        if "/games/" in href and name:
 
             add_game(
-                text,
-                urljoin(
-                    "https://www.y8.com",
-                    href
-                ),
-                "Y8"
+                name,
+                href,
+                "Y8",
+                "Fun"
             )
 
             if len(games) >= MAX_GAMES:
                 break
 
-    time.sleep(.4)
+    time.sleep(.2)
 
 
-# ============================================================
-# EXTRA REAL FUN WEBSITES
-# ============================================================
+# --------------------------------------------------
+# ITCH.IO HTML5
+# --------------------------------------------------
 
-extra = [
+print("Getting itch.io...")
+
+for page in range(1, 60):
+
+    if len(games) >= MAX_GAMES:
+        break
+
+    url = f"https://itch.io/games/html5?page={page}"
+    html = get_page(url)
+
+    if not html:
+        continue
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    for a in soup.find_all("a", href=True):
+
+        href = urljoin(url, a["href"])
+        name = a.get_text(" ", strip=True)
+
+        if "itch.io" in href and name:
+
+            # Ignore category/navigation links
+            bad_words = [
+                "/games/",
+                "/tags/",
+                "/developers/",
+                "/jams/",
+                "/community/",
+                "/profile/"
+            ]
+
+            if any(x in href for x in bad_words):
+                continue
+
+            add_game(
+                name,
+                href,
+                "itch.io",
+                "Indie"
+            )
+
+            if len(games) >= MAX_GAMES:
+                break
+
+    time.sleep(.2)
+
+
+# --------------------------------------------------
+# MANUAL FUN SITES
+# --------------------------------------------------
+
+fun_sites = [
 
     ("Neal.fun", "https://neal.fun/", "Fun"),
     ("Infinite Craft", "https://neal.fun/infinite-craft/", "Fun"),
     ("The Password Game", "https://neal.fun/password-game/", "Puzzle"),
-    ("The Deep Sea", "https://neal.fun/deep-sea/", "Fun"),
-    ("Space Elevator", "https://neal.fun/space-elevator/", "Fun"),
     ("Stimulation Clicker", "https://neal.fun/stimulation-clicker/", "Fun"),
-
-    ("The Useless Web", "https://theuselessweb.com/", "Weird"),
-    ("Pointer Pointer", "https://pointerpointer.com/", "Weird"),
+    ("Space Elevator", "https://neal.fun/space-elevator/", "Fun"),
+    ("Deep Sea", "https://neal.fun/deep-sea/", "Fun"),
+    ("The Useless Web", "https://theuselessweb.com/", "Fun"),
+    ("Pointer Pointer", "https://pointerpointer.com/", "Fun"),
     ("Bored Button", "https://www.boredbutton.com/", "Fun"),
     ("Radio Garden", "https://radio.garden/", "Music"),
     ("Window Swap", "https://www.window-swap.com/", "Fun"),
-
     ("Patatap", "https://patatap.com/", "Music"),
-    ("Chrome Music Lab",
-     "https://musiclab.chromeexperiments.com/",
-     "Music"),
-
-    ("Quick Draw",
-     "https://quickdraw.withgoogle.com/",
-     "Creative"),
-
-    ("AutoDraw",
-     "https://www.autodraw.com/",
-     "Creative"),
-
-    ("Chrome Experiments",
-     "https://experiments.withgoogle.com/",
-     "Creative"),
-
-    ("GeoGuessr",
-     "https://www.geoguessr.com/",
-     "Puzzle"),
-
-    ("Human Benchmark",
-     "https://humanbenchmark.com/",
-     "Puzzle"),
-
-    ("Skribbl.io",
-     "https://skribbl.io/",
-     "Multiplayer"),
-
-    ("Gartic Phone",
-     "https://garticphone.com/",
-     "Multiplayer"),
-
-    ("Chess.com",
-     "https://www.chess.com/play",
-     "Multiplayer"),
-
-    ("Lichess",
-     "https://lichess.org/",
-     "Multiplayer"),
-
-    ("Google Earth",
-     "https://earth.google.com/web/",
-     "Maps"),
-
-    ("Photopea",
-     "https://www.photopea.com/",
-     "Creative"),
-
-    ("Sketchpad",
-     "https://sketch.io/sketchpad/",
-     "Creative"),
-
-    ("Agar.io",
-     "https://agar.io/",
-     ".io"),
-
-    ("Slither.io",
-     "https://slither.io/",
-     ".io"),
-
-    ("Diep.io",
-     "https://diep.io/",
-     ".io"),
-
-    ("Krunker.io",
-     "https://krunker.io/",
-     ".io"),
-
-    ("Shell Shockers",
-     "https://shellshock.io/",
-     ".io"),
-
-    ("ZombsRoyale.io",
-     "https://zombsroyale.io/",
-     ".io"),
-
-    ("Venge.io",
-     "https://venge.io/",
-     ".io"),
-
-    ("Zombs.io",
-     "https://zombs.io/",
-     ".io"),
-
-    ("Paper.io 2",
-     "https://paper-io.com/",
-     ".io"),
-
-    ("Hole.io",
-     "https://hole-io.com/",
-     ".io"),
-
-    ("Little Big Snake",
-     "https://littlebigsnake.com/",
-     ".io"),
-
-    ("Bonk.io",
-     "https://bonk.io/",
-     ".io"),
-
-    ("Poki",
-     "https://poki.com/",
-     "Game Hub"),
-
-    ("Y8",
-     "https://www.y8.com/",
-     "Game Hub"),
-
-    ("CrazyGames",
-     "https://www.crazygames.com/",
-     "Game Hub"),
-
-    ("Newgrounds",
-     "https://www.newgrounds.com/games",
-     "Game Hub"),
-
-    ("Game Jolt",
-     "https://gamejolt.com/games",
-     "Game Hub"),
-
-    ("Armor Games",
-     "https://armorgames.com/",
-     "Game Hub"),
-
-    ("Kongregate",
-     "https://www.kongregate.com/",
-     "Game Hub"),
-
-    ("Miniclip",
-     "https://www.miniclip.com/",
-     "Game Hub"),
-
-    ("Kizi",
-     "https://kizi.com/",
-     "Game Hub"),
-
-    ("Friv",
-     "https://www.friv.com/",
-     "Game Hub")
+    ("Chrome Music Lab", "https://musiclab.chromeexperiments.com/", "Music"),
+    ("Quick Draw", "https://quickdraw.withgoogle.com/", "Creative"),
+    ("AutoDraw", "https://www.autodraw.com/", "Creative"),
+    ("Chrome Experiments", "https://experiments.withgoogle.com/", "Creative"),
+    ("GeoGuessr", "https://www.geoguessr.com/", "Geography"),
+    ("Human Benchmark", "https://humanbenchmark.com/", "Puzzle"),
+    ("Skribbl", "https://skribbl.io/", "Multiplayer"),
+    ("Gartic Phone", "https://garticphone.com/", "Multiplayer"),
+    ("Chess.com", "https://www.chess.com/play", "Strategy"),
+    ("Lichess", "https://lichess.org/", "Strategy"),
+    ("Google Earth", "https://earth.google.com/", "Fun"),
+    ("Photopea", "https://www.photopea.com/", "Creative"),
+    ("Sketchpad", "https://sketch.io/sketchpad/", "Creative"),
+    ("Agar.io", "https://agar.io/", "IO"),
+    ("Slither.io", "https://slither.io/", "IO"),
+    ("Diep.io", "https://diep.io/", "IO"),
+    ("Krunker", "https://krunker.io/", "Shooting"),
+    ("Shell Shockers", "https://shellshock.io/", "Shooting"),
+    ("ZombsRoyale.io", "https://zombsroyale.io/", "IO"),
+    ("Venge.io", "https://venge.io/", "Shooting"),
+    ("Zombs.io", "https://zombs.io/", "IO"),
+    ("Paper.io 2", "https://paper-io.com/", "IO"),
+    ("Hole.io", "https://hole-io.com/", "IO"),
+    ("Little Big Snake", "https://littlebigsnake.com/", "IO"),
+    ("Bonk.io", "https://bonk.io/", "IO"),
+    ("Poki", "https://poki.com/", "Games"),
+    ("Y8", "https://www.y8.com/", "Games"),
+    ("Addicting Games", "https://www.addictinggames.com/", "Games"),
+    ("Newgrounds", "https://www.newgrounds.com/games", "Games"),
+    ("itch.io", "https://itch.io/games", "Games"),
+    ("Game Jolt", "https://gamejolt.com/games", "Games"),
+    ("Armor Games", "https://armorgames.com/", "Games"),
+    ("Kongregate", "https://www.kongregate.com/", "Games"),
+    ("Miniclip", "https://www.miniclip.com/", "Games"),
+    ("CrazyGames", "https://www.crazygames.com/", "Games"),
 ]
 
-
-for name, url, category in extra:
-
-    add_game(
-        name,
-        url,
-        category
-    )
+for name, url, category in fun_sites:
+    add_game(name, url, "Fun Websites", category)
 
 
-# ============================================================
-# SAVE
-# ============================================================
+# --------------------------------------------------
+# LIMIT + SAVE
+# --------------------------------------------------
 
-result = list(games.values())
+games = games[:MAX_GAMES]
 
-result = result[:MAX_GAMES]
+with open("games.json", "w", encoding="utf-8") as f:
+    json.dump(games, f, indent=2, ensure_ascii=False)
 
-with open(
-    "games.json",
-    "w",
-    encoding="utf-8"
-) as f:
-
-    json.dump(
-        result,
-        f,
-        ensure_ascii=False,
-        indent=2
-    )
-
-print("\n================================")
-print("DONE!")
-print("REAL ENTRIES:", len(result))
-print("Saved as: games.json")
+print()
+print("================================")
+print("NATHAN'S WEBSITE DATABASE")
+print("================================")
+print(f"Real entries collected: {len(games)}")
+print("Saved as games.json")
 print("================================")
