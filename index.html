@@ -1,255 +1,321 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nathan's Website</title>
 
 <style>
+:root{
+  --bg:#070914;
+  --panel:#101426;
+  --panel2:#151b31;
+  --text:#f4f7ff;
+  --muted:#9da8c4;
+  --accent:#7c5cff;
+  --border:#252d49;
+}
+
 *{box-sizing:border-box}
 
 body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#090910;
-    color:white;
+  margin:0;
+  background:radial-gradient(circle at top,#17133a 0,#070914 50%);
+  color:var(--text);
+  font-family:Inter,system-ui,Segoe UI,sans-serif;
+  min-height:100vh;
 }
 
 header{
-    text-align:center;
-    padding:28px 15px;
-    background:#11111c;
-    border-bottom:1px solid #29293c;
+  padding:42px 22px 25px;
+  text-align:center;
 }
 
-header h1{
-    margin:0;
-    font-size:34px;
+h1{
+  font-size:clamp(36px,7vw,68px);
+  margin:0;
+  font-weight:900;
+  letter-spacing:-3px;
 }
 
-header p{color:#999}
-
-.container{
-    max-width:1400px;
-    margin:auto;
-    padding:20px;
+.hero{
+  color:var(--muted);
+  font-size:17px;
+  margin:10px auto 20px;
+  max-width:800px;
 }
 
-.search{
-    width:100%;
-    padding:16px;
-    border-radius:12px;
-    border:1px solid #33334a;
-    background:#151522;
-    color:white;
-    font-size:17px;
-    outline:none;
+.warning{
+  color:#ffd166;
+  margin:10px;
+  font-weight:700;
 }
 
-.buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:15px 0;
+.toolbar{
+  max-width:1100px;
+  margin:auto;
+  padding:0 18px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+input,button{font:inherit}
+
+#search{
+  width:min(520px,100%);
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:13px 16px;
+  border-radius:14px;
+  outline:none;
 }
 
 button{
-    border:0;
-    border-radius:10px;
-    padding:12px 17px;
-    background:#202034;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--text);
+  padding:11px 14px;
+  border-radius:12px;
+  cursor:pointer;
 }
 
-button:hover{
-    background:#343451;
-    transform:translateY(-1px);
+button:hover,.active{
+  border-color:var(--accent);
+  background:var(--panel2);
 }
 
-.categories{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:10px;
+main{
+  max-width:1200px;
+  margin:28px auto;
+  padding:0 18px;
 }
 
-.stats{
-    color:#999;
-    margin:15px 0;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:15px;
+#grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:14px;
 }
 
 .card{
-    background:#151522;
-    border:1px solid #28283b;
-    border-radius:15px;
-    padding:18px;
-    min-height:150px;
+  background:linear-gradient(145deg,var(--panel),#0c1020);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:17px;
+  min-height:155px;
+  display:flex;
+  flex-direction:column;
+  transition:.16s;
 }
 
 .card:hover{
-    transform:translateY(-4px);
-    border-color:#555;
+  transform:translateY(-3px);
+  border-color:#46517c;
 }
 
-.card h3{margin-top:0}
+.icon{font-size:34px}
 
-.card p{
-    color:#999;
-    min-height:35px;
+.name{
+  font-size:18px;
+  font-weight:800;
+  margin-top:9px;
+}
+
+.desc{
+  font-size:13px;
+  color:var(--muted);
+  margin:6px 0 14px;
+  line-height:1.35;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  margin-top:auto;
 }
 
 .play{
-    width:100%;
-    background:#5865f2;
+  flex:1;
+  text-decoration:none;
+  text-align:center;
+  background:var(--accent);
+  color:white;
+  padding:10px;
+  border-radius:11px;
+  font-weight:800;
 }
 
-.load{
-    display:block;
-    margin:25px auto;
+.fav{
+  width:44px;
+  padding:0;
 }
 
 .section{
-    margin-top:45px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:34px 0 14px;
 }
 
-.section h2{
-    font-size:28px;
+.section h2{margin:0}
+
+#count{
+  color:var(--muted);
+  font-size:13px;
 }
 
-.toolGrid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:18px;
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:60px 10px;
+  display:none;
 }
 
-.tool{
-    background:#151522;
-    border:1px solid #29293c;
-    border-radius:16px;
-    padding:20px;
+.funbox{
+  margin-top:36px;
+  background:linear-gradient(145deg,#11172c,#0b1020);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
 }
 
-.tool h3{
-    margin-top:0;
-    font-size:21px;
+.funbuttons{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
-.tool input,
-.tool textarea,
-.tool select{
-    width:100%;
-    padding:12px;
-    margin:5px 0;
-    border-radius:9px;
-    border:1px solid #33334a;
-    background:#0d0d16;
-    color:white;
-    outline:none;
+#fortune{
+  margin-top:16px;
+  font-size:18px;
+  min-height:28px;
 }
 
-.tool textarea{
-    min-height:100px;
-    resize:vertical;
+/* AI BUTTON */
+
+#aiButton{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:9998;
+  background:#7c5cff;
+  color:white;
+  border:none;
+  padding:15px 21px;
+  border-radius:16px;
+  font-size:17px;
+  font-weight:900;
+  box-shadow:0 8px 30px #0008;
 }
 
-.result{
-    margin-top:10px;
-    padding:12px;
-    background:#0d0d16;
-    border-radius:9px;
-    color:#bbb;
-    min-height:42px;
-    word-break:break-word;
+/* AI WINDOW */
+
+#aiWindow{
+  display:none;
+  position:fixed;
+  right:20px;
+  bottom:82px;
+  width:390px;
+  height:550px;
+  background:#101426;
+  border:1px solid #303952;
+  border-radius:20px;
+  z-index:9999;
+  overflow:hidden;
+  box-shadow:0 20px 60px #000b;
 }
 
-.bigResult{
-    font-size:25px;
-    text-align:center;
-    font-weight:bold;
+.aiHeader{
+  height:60px;
+  background:#171c31;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 17px;
+  font-size:18px;
+  font-weight:900;
 }
 
-.toolButtons{
-    display:flex;
-    gap:7px;
-    flex-wrap:wrap;
-    margin-top:7px;
+.aiHeader button{
+  border:0;
+  background:none;
+  font-size:22px;
+}
+
+#aiMessages{
+  height:430px;
+  overflow-y:auto;
+  padding:15px;
+}
+
+.aiMessage{
+  max-width:85%;
+  padding:11px 14px;
+  border-radius:14px;
+  margin-bottom:10px;
+  white-space:pre-wrap;
+  line-height:1.4;
+}
+
+.aiMessage.bot{
+  background:#20263a;
+}
+
+.aiMessage.user{
+  background:#7c5cff;
+  margin-left:auto;
+}
+
+.aiInput{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:60px;
+  padding:9px;
+  display:flex;
+  gap:8px;
+  background:#171c31;
+}
+
+.aiInput input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  border-radius:11px;
+  background:#292f43;
+  color:white;
+  padding:10px;
+}
+
+.aiInput button{
+  width:50px;
+  background:#7c5cff;
+  border:0;
+  font-size:20px;
 }
 
 footer{
-    text-align:center;
-    color:#777;
-    padding:50px 20px;
+  text-align:center;
+  color:var(--muted);
+  padding:35px 15px;
 }
 
-/* MEMES */
+@media(max-width:500px){
+  #aiWindow{
+    left:10px;
+    right:10px;
+    width:auto;
+    bottom:78px;
+    height:520px;
+  }
 
-.memeSide{
-    position:fixed;
-    right:18px;
-    top:50%;
-    transform:translateY(-50%);
-    z-index:1000;
-}
-
-.memeSide button{
-    background:#ff4d6d;
-    box-shadow:0 5px 25px #0009;
-}
-
-#memePage{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:3000;
-    overflow-y:auto;
-    background:#090910;
-}
-
-.memeHeader{
-    padding:20px;
-    background:#11111c;
-    border-bottom:1px solid #29293c;
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-.memeContainer{
-    max-width:1000px;
-    margin:auto;
-    padding:25px;
-}
-
-.memeGrid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:15px;
-}
-
-.memeButton{
-    min-height:110px;
-    font-size:18px;
-}
-
-.memeEmoji{
-    display:block;
-    font-size:35px;
-    margin-bottom:8px;
-}
-
-@media(max-width:600px){
-    header h1{font-size:26px}
-    .memeSide{
-        right:8px;
-    }
+  #aiMessages{
+    height:400px;
+  }
 }
 </style>
 </head>
@@ -257,493 +323,115 @@ footer{
 <body>
 
 <header>
-    <h1>🎮 NATHAN'S WEBSITE</h1>
-    <p>⚠️ Some games and websites may be blocked on your network.</p>
+
+<h1>🎮 NATHAN'S WEBSITE</h1>
+
+<div class="hero">
+  Games, fun websites, random stuff and now your own AI 🤖
+</div>
+
+<div class="warning">
+  ⚠️ Some games and websites may be blocked on your network.
+</div>
+
+<div class="toolbar">
+
+<input
+  id="search"
+  placeholder="Search games..."
+  autocomplete="off"
+>
+
+<button class="filter active" data-cat="All">All</button>
+<button class="filter" data-cat="Multiplayer">Multiplayer</button>
+<button class="filter" data-cat="Puzzle">Puzzle</button>
+<button class="filter" data-cat="Racing">Racing</button>
+<button class="filter" data-cat="Fun">Fun</button>
+<button class="filter" data-cat="Game Hub">Game Hubs</button>
+<button class="filter" data-cat="Favorites">⭐ Favorites</button>
+
+</div>
 </header>
 
-<div class="container">
+<main>
 
-<input id="search" class="search"
-placeholder="🔎 Search games, websites and tools...">
-
-<div class="buttons">
-    <button onclick="showAll()">🌎 ALL</button>
-    <button onclick="randomGame()">🎲 RANDOM GAME</button>
-    <button onclick="bored()">😐 I'M BORED</button>
-    <button onclick="document.getElementById('helpful').scrollIntoView()">🧰 HELPFUL STUFF</button>
+<div class="section">
+<h2>🔥 Games & Stuff</h2>
+<span id="count"></span>
 </div>
 
-<div class="categories">
-    <button onclick="filterCategory('IO')">🌐 IO</button>
-    <button onclick="filterCategory('Fun')">😂 FUN</button>
-    <button onclick="filterCategory('Classic')">🕹️ CLASSICS</button>
-    <button onclick="filterCategory('Creative')">🎨 CREATIVE</button>
-    <button onclick="filterCategory('Education')">📚 EDUCATION</button>
-    <button onclick="filterCategory('Hub')">🎮 GAME HUBS</button>
+<div id="grid"></div>
+
+<div class="empty" id="empty">
+No results 😭
 </div>
 
-<div class="stats" id="stats"></div>
+<section class="funbox">
 
-<div id="games" class="grid"></div>
+<h2>🧪 Randomizer Zone</h2>
 
-<button class="load" onclick="loadMore()">LOAD MORE</button>
+<div class="funbuttons">
 
+<button id="randomGame">🎲 Random Game</button>
+<button id="coin">🪙 Flip Coin</button>
+<button id="dice">🎲 Roll Dice</button>
+<button id="fortuneBtn">🔮 Fortune</button>
 
-<!-- =========================
-     HELPFUL STUFF
-========================= -->
-
-<section class="section" id="helpful">
-
-<h2>🧰 HELPFUL STUFF</h2>
-<p style="color:#888">
-Useful tools you can use directly on this website.
-</p>
-
-<div class="toolGrid">
-
-<!-- CALCULATOR -->
-
-<div class="tool">
-<h3>🧮 Calculator</h3>
-
-<input id="calcInput"
-placeholder="Example: 25 * 4 + 10">
-
-<div class="toolButtons">
-<button onclick="calculate()">CALCULATE</button>
-<button onclick="document.getElementById('calcInput').value='';document.getElementById('calcResult').textContent='Ready!'">
-CLEAR
-</button>
 </div>
 
-<div id="calcResult" class="result bigResult">Ready!</div>
-</div>
+<div id="fortune"></div>
 
-
-<!-- UNIT CONVERTER -->
-
-<div class="tool">
-<h3>📏 Unit Converter</h3>
-
-<input id="unitValue" type="number" placeholder="Enter number">
-
-<select id="unitType">
-<option value="mft">Meters → Feet</option>
-<option value="ftm">Feet → Meters</option>
-<option value="kmmi">Kilometers → Miles</option>
-<option value="mileskm">Miles → Kilometers</option>
-<option value="kg">Kilograms → Pounds</option>
-<option value="lb">Pounds → Kilograms</option>
-<option value="cm">Centimeters → Inches</option>
-<option value="inch">Inches → Centimeters</option>
-</select>
-
-<button onclick="convertUnit()">CONVERT</button>
-
-<div id="unitResult" class="result">Result appears here.</div>
-</div>
-
-
-<!-- TEMPERATURE -->
-
-<div class="tool">
-<h3>🌡️ Temperature</h3>
-
-<input id="tempValue" type="number" placeholder="Temperature">
-
-<select id="tempType">
-<option value="cf">Celsius → Fahrenheit</option>
-<option value="fc">Fahrenheit → Celsius</option>
-</select>
-
-<button onclick="convertTemp()">CONVERT</button>
-
-<div id="tempResult" class="result">Result appears here.</div>
-</div>
-
-
-<!-- TIMER -->
-
-<div class="tool">
-<h3>⏱️ Timer</h3>
-
-<input id="timerMinutes" type="number" placeholder="Minutes">
-<input id="timerSeconds" type="number" placeholder="Seconds">
-
-<div id="timerDisplay" class="result bigResult">00:00</div>
-
-<div class="toolButtons">
-<button onclick="startTimer()">START</button>
-<button onclick="pauseTimer()">PAUSE</button>
-<button onclick="resetTimer()">RESET</button>
-</div>
-</div>
-
-
-<!-- STOPWATCH -->
-
-<div class="tool">
-<h3>⏱️ Stopwatch</h3>
-
-<div id="stopwatch" class="result bigResult">00:00:00</div>
-
-<div class="toolButtons">
-<button onclick="startStopwatch()">START</button>
-<button onclick="stopStopwatch()">STOP</button>
-<button onclick="resetStopwatch()">RESET</button>
-</div>
-</div>
-
-
-<!-- PASSWORD GENERATOR -->
-
-<div class="tool">
-<h3>🔐 Password Generator</h3>
-
-<input id="passwordLength"
-type="number"
-value="16"
-min="4"
-max="100"
-placeholder="Length">
-
-<button onclick="generatePassword()">GENERATE</button>
-
-<div id="passwordResult" class="result">
-Your password appears here.
-</div>
-
-<button onclick="copyPassword()">📋 COPY</button>
-</div>
-
-
-<!-- DICE -->
-
-<div class="tool">
-<h3>🎲 Dice Roller</h3>
-
-<select id="diceSides">
-<option value="6">D6</option>
-<option value="8">D8</option>
-<option value="10">D10</option>
-<option value="12">D12</option>
-<option value="20">D20</option>
-<option value="100">D100</option>
-</select>
-
-<button onclick="rollDice()">ROLL</button>
-
-<div id="diceResult" class="result bigResult">🎲</div>
-</div>
-
-
-<!-- COIN -->
-
-<div class="tool">
-<h3>🪙 Coin Flip</h3>
-
-<button onclick="flipCoin()">FLIP COIN</button>
-
-<div id="coinResult" class="result bigResult">🪙</div>
-</div>
-
-
-<!-- RANDOM NUMBER -->
-
-<div class="tool">
-<h3>🔢 Random Number</h3>
-
-<input id="randomMin" type="number" placeholder="Minimum">
-
-<input id="randomMax" type="number" placeholder="Maximum">
-
-<button onclick="randomNumber()">GENERATE</button>
-
-<div id="randomResult" class="result bigResult">?</div>
-</div>
-
-
-<!-- TEXT COUNTER -->
-
-<div class="tool">
-<h3>🔤 Text Counter</h3>
-
-<textarea id="textCounter"
-oninput="countText()"
-placeholder="Type something..."></textarea>
-
-<div id="textResult" class="result">
-Characters: 0<br>
-Words: 0<br>
-Lines: 0
-</div>
-</div>
-
-
-<!-- CASE CONVERTER -->
-
-<div class="tool">
-<h3>🔠 Text Case Converter</h3>
-
-<textarea id="caseText" placeholder="Enter text..."></textarea>
-
-<div class="toolButtons">
-<button onclick="upperCase()">UPPERCASE</button>
-<button onclick="lowerCase()">lowercase</button>
-<button onclick="titleCase()">Title Case</button>
-</div>
-</div>
-
-
-<!-- NOTES -->
-
-<div class="tool">
-<h3>📝 Quick Notes</h3>
-
-<textarea id="notes"
-placeholder="Write something here..."></textarea>
-
-<div class="toolButtons">
-<button onclick="saveNotes()">💾 SAVE</button>
-<button onclick="clearNotes()">🗑️ CLEAR</button>
-</div>
-
-<div id="notesStatus" class="result">
-Notes are saved only in this browser.
-</div>
-</div>
-
-
-<!-- COLOR PICKER -->
-
-<div class="tool">
-<h3>🎨 Color Picker</h3>
-
-<input id="colorPicker"
-type="color"
-value="#5865f2"
-oninput="showColor()">
-
-<div id="colorResult" class="result bigResult">
-#5865F2
-</div>
-
-<button onclick="copyColor()">📋 COPY HEX</button>
-</div>
-
-
-<!-- AGE CALCULATOR -->
-
-<div class="tool">
-<h3>🎂 Age Calculator</h3>
-
-<input id="birthDate" type="date">
-
-<button onclick="calculateAge()">CALCULATE AGE</button>
-
-<div id="ageResult" class="result">
-Enter your birthday.
-</div>
-</div>
-
-
-<!-- DISCOUNT CALCULATOR -->
-
-<div class="tool">
-<h3>💰 Discount Calculator</h3>
-
-<input id="originalPrice"
-type="number"
-placeholder="Original price">
-
-<input id="discount"
-type="number"
-placeholder="Discount %">
-
-<button onclick="calculateDiscount()">CALCULATE</button>
-
-<div id="discountResult" class="result">
-Result appears here.
-</div>
-</div>
-
-
-<!-- TIP CALCULATOR -->
-
-<div class="tool">
-<h3>💵 Tip Calculator</h3>
-
-<input id="bill"
-type="number"
-placeholder="Bill amount">
-
-<input id="tipPercent"
-type="number"
-placeholder="Tip %">
-
-<button onclick="calculateTip()">CALCULATE</button>
-
-<div id="tipResult" class="result">
-Result appears here.
-</div>
-</div>
-
-
-<!-- BMI -->
-
-<div class="tool">
-<h3>📊 BMI Calculator</h3>
-
-<input id="weight"
-type="number"
-placeholder="Weight in kg">
-
-<input id="height"
-type="number"
-placeholder="Height in meters">
-
-<button onclick="calculateBMI()">CALCULATE</button>
-
-<div id="bmiResult" class="result">
-Result appears here.
-</div>
-</div>
-
-
-<!-- DATE -->
-
-<div class="tool">
-<h3>📅 Days Between Dates</h3>
-
-<input id="date1" type="date">
-<input id="date2" type="date">
-
-<button onclick="daysBetween()">CALCULATE</button>
-
-<div id="dateResult" class="result">
-Result appears here.
-</div>
-</div>
-
-
-<!-- QR -->
-
-<div class="tool">
-<h3>🔗 Helpful Websites</h3>
-
-<button onclick="window.open('https://www.google.com','_blank')">
-🔎 Google
-</button>
-
-<button onclick="window.open('https://www.youtube.com','_blank')">
-▶️ YouTube
-</button>
-
-<button onclick="window.open('https://www.wikipedia.org','_blank')">
-📖 Wikipedia
-</button>
-
-<button onclick="window.open('https://www.speedtest.net','_blank')">
-⚡ Speed Test
-</button>
-
-<button onclick="window.open('https://www.photopea.com','_blank')">
-🎨 Photopea
-</button>
-
-<button onclick="window.open('https://www.remove.bg','_blank')">
-🖼️ Remove Background
-</button>
-</div>
-
-</div>
 </section>
 
-</div>
-
-
-<!-- MEME BUTTON -->
-
-<div class="memeSide">
-<button onclick="openMemes()">😂 MEMES</button>
-</div>
-
-
-<!-- MEME PAGE -->
-
-<div id="memePage">
-
-<div class="memeHeader">
-<button onclick="closeMemes()">← BACK</button>
-<h2>😂 MEME SOUNDBOARD</h2>
-</div>
-
-<div class="memeContainer">
-
-<p style="color:#999">
-Click a button to play a sound 🔊
-</p>
-
-<div class="memeGrid">
-
-<button class="memeButton" onclick="playSound('vine')">
-<span class="memeEmoji">💥</span>
-VINE BOOM
-</button>
-
-<button class="memeButton" onclick="playSound('bruh')">
-<span class="memeEmoji">😭</span>
-BRUH
-</button>
-
-<button class="memeButton" onclick="playSound('airhorn')">
-<span class="memeEmoji">📢</span>
-AIRHORN
-</button>
-
-<button class="memeButton" onclick="playSound('bonk')">
-<span class="memeEmoji">🔨</span>
-BONK
-</button>
-
-<button class="memeButton" onclick="playSound('laugh')">
-<span class="memeEmoji">😂</span>
-LAUGH
-</button>
-
-<button class="memeButton" onclick="playSound('wow')">
-<span class="memeEmoji">😮</span>
-WOW
-</button>
-
-<button class="memeButton" onclick="playSound('sad')">
-<span class="memeEmoji">😔</span>
-SAD</button>
-
-<button class="memeButton" onclick="playSound('error')">
-<span class="memeEmoji">🚨</span>
-ERROR
-</button>
-
-<button class="memeButton" onclick="playSound('pop')">
-<span class="memeEmoji">💨</span>
-POP
-</button>
-
-<button class="memeButton" onclick="playSound('bass')">
-<span class="memeEmoji">🔊</span>
-BASS DROP
-</button>
-
-</div>
-</div>
-</div>
-
+</main>
 
 <footer>
-Nathan's Website 🎮 • 🧰 Tools • 😂 Memes
+Nathan's Website 🎮
+<br>
+<span>External websites open in a new tab.</span>
 </footer>
+
+
+<!-- AI BUTTON -->
+
+<button id="aiButton" onclick="openAI()">
+🤖 AI
+</button>
+
+
+<!-- AI WINDOW -->
+
+<div id="aiWindow">
+
+<div class="aiHeader">
+
+<span>🤖 Nathan AI</span>
+
+<button onclick="closeAI()">✕</button>
+
+</div>
+
+<div id="aiMessages">
+
+<div class="aiMessage bot">
+👋 Hey! I'm Nathan AI. Ask me anything!
+</div>
+
+</div>
+
+<div class="aiInput">
+
+<input
+  id="aiInput"
+  placeholder="Ask Nathan AI..."
+  autocomplete="off"
+>
+
+<button onclick="sendAI()">➤</button>
+
+</div>
+
+</div>
 
 
 <script>
@@ -752,1034 +440,774 @@ Nathan's Website 🎮 • 🧰 Tools • 😂 Memes
    GAMES
 ========================= */
 
-const games=[
+const games = [
 
-["Agar.io","https://agar.io","IO"],
-["Slither.io","https://slither.io","IO"],
-["Diep.io","https://diep.io","IO"],
-["Krunker","https://krunker.io","IO"],
-["Shell Shockers","https://shellshock.io","IO"],
-["ZombsRoyale","https://zombsroyale.io","IO"],
-["Venge.io","https://venge.io","IO"],
-["Zombs.io","https://zombs.io","IO"],
-["Paper.io 2","https://paper-io.com","IO"],
-["Hole.io","https://hole-io.com","IO"],
-["Little Big Snake","https://littlebigsnake.com","IO"],
-["Bonk.io","https://bonk.io","IO"],
-["Mope.io","https://mope.io","IO"],
-["Gats.io","https://gats.io","IO"],
-["Brutal.io","https://brutal.io","IO"],
-["Powerline.io","https://powerline.io","IO"],
-["Wormate.io","https://wormate.io","IO"],
-["Starve.io","https://starve.io","IO"],
-["Deeeep.io","https://deeeep.io","IO"],
-["Florr.io","https://florr.io","IO"],
-["Moomoo.io","https://moomoo.io","IO"],
-["Taming.io","https://taming.io","IO"],
-["Survev.io","https://survev.io","IO"],
-["Hordes.io","https://hordes.io","IO"],
-["Ev.io","https://ev.io","IO"],
-["Mini Royale","https://miniroyale.io","IO"],
-["Kirka.io","https://kirka.io","IO"],
-["Narrow One","https://narrow.one","IO"],
-["1v1.LOL","https://1v1.lol","IO"],
+{
+name:"CrazyGames",
+icon:"🎮",
+cat:"Game Hub",
+url:"https://www.crazygames.com/",
+desc:"Huge browser-game library"
+},
 
-["Neal.fun","https://neal.fun","Fun"],
-["Infinite Craft","https://neal.fun/infinite-craft","Fun"],
-["The Password Game","https://neal.fun/password-game","Fun"],
-["Stimulation Clicker","https://neal.fun/stimulation-clicker","Fun"],
-["Space Elevator","https://neal.fun/space-elevator","Fun"],
-["Deep Sea","https://neal.fun/deep-sea","Fun"],
-["Useless Web","https://theuselessweb.com","Fun"],
-["Pointer Pointer","https://pointerpointer.com","Fun"],
-["Bored Button","https://www.boredbutton.com","Fun"],
-["Radio Garden","https://radio.garden","Fun"],
-["Window Swap","https://www.window-swap.com","Fun"],
-["Patatap","https://patatap.com","Fun"],
-["Chrome Music Lab","https://musiclab.chromeexperiments.com","Fun"],
-["Quick Draw","https://quickdraw.withgoogle.com","Fun"],
-["AutoDraw","https://www.autodraw.com","Creative"],
-["Chrome Experiments","https://experiments.withgoogle.com","Fun"],
-["Human Benchmark","https://humanbenchmark.com","Fun"],
-["Skribbl","https://skribbl.io","Fun"],
-["Gartic Phone","https://garticphone.com","Fun"],
-["GeoGuessr","https://www.geoguessr.com","Fun"],
-["Google Earth","https://earth.google.com","Fun"],
+{
+name:"Poki",
+icon:"🕹️",
+cat:"Game Hub",
+url:"https://poki.com/",
+desc:"Large casual-game library"
+},
 
-["Photopea","https://www.photopea.com","Creative"],
-["Sketchpad","https://sketch.io/sketchpad","Creative"],
-["Pixlr","https://pixlr.com","Creative"],
-["Kleki","https://kleki.com","Creative"],
-["JS Paint","https://jspaint.app","Creative"],
-["Excalidraw","https://excalidraw.com","Creative"],
+{
+name:"Coolmath Games",
+icon:"🧠",
+cat:"Game Hub",
+url:"https://www.coolmathgames.com/",
+desc:"Puzzle and arcade games"
+},
 
-["Poki","https://poki.com","Hub"],
-["CrazyGames","https://www.crazygames.com","Hub"],
-["Y8","https://www.y8.com","Hub"],
-["Newgrounds","https://www.newgrounds.com","Hub"],
-["itch.io","https://itch.io","Hub"],
-["Game Jolt","https://gamejolt.com","Hub"],
-["Armor Games","https://armorgames.com","Hub"],
-["Kongregate","https://www.kongregate.com","Hub"],
-["Miniclip","https://www.miniclip.com","Hub"],
-["Friv","https://www.friv.com","Hub"],
+{
+name:"Newgrounds",
+icon:"🎨",
+cat:"Game Hub",
+url:"https://www.newgrounds.com/games",
+desc:"Indie games and classics"
+},
 
-["Tetris","https://tetris.com/play-tetris","Classic"],
-["Chess","https://www.chess.com/play/computer","Classic"],
-["Lichess","https://lichess.org","Classic"],
-["2048","https://play2048.co","Classic"],
-["Cookie Clicker","https://orteil.dashnet.org/cookieclicker","Classic"],
-["A Dark Room","https://adarkroom.doublespeakgames.com","Classic"],
-["Little Alchemy","https://littlealchemy.com","Classic"],
-["Little Alchemy 2","https://littlealchemy2.com","Classic"],
-["Universal Paperclips","https://www.decisionproblem.com/paperclips","Classic"],
-["Run 3","https://www.coolmathgames.com/0-run-3","Classic"],
-["Fireboy and Watergirl","https://www.coolmathgames.com/0-fireboy-and-water-girl","Classic"],
-["Moto X3M","https://www.coolmathgames.com/0-moto-x3m","Classic"],
-["Bob the Robber","https://www.coolmathgames.com/0-bob-the-robber","Classic"],
-["Stickman Hook","https://www.coolmathgames.com/0-stickman-hook","Classic"],
-["Vex 3","https://www.coolmathgames.com/0-vex-3","Classic"],
-["Vex 4","https://www.coolmathgames.com/0-vex-4","Classic"],
-["Vex 5","https://www.coolmathgames.com/0-vex-5","Classic"],
-["Vex 6","https://www.coolmathgames.com/0-vex-6","Classic"],
-["Vex 7","https://www.coolmathgames.com/0-vex-7","Classic"],
-["Drift Hunters","https://www.crazygames.com/game/drift-hunters","Classic"],
-["Madalin Stunt Cars 2","https://www.crazygames.com/game/madalin-stunt-cars-2","Classic"],
-["House of Hazards","https://www.crazygames.com/game/house-of-hazards","Classic"],
+{
+name:"itch.io",
+icon:"🛠️",
+cat:"Game Hub",
+url:"https://itch.io/games/platform-web",
+desc:"Indie browser games"
+},
 
-["Funbrain","https://www.funbrain.com","Education"],
-["ABCya","https://www.abcya.com","Education"],
-["Coolmath Games","https://www.coolmathgames.com","Education"],
-["Math Playground","https://www.mathplayground.com","Education"],
-["Arcademics","https://www.arcademics.com","Education"],
-["PBS Kids","https://pbskids.org/games","Education"],
-["NASA Space Place","https://spaceplace.nasa.gov","Education"]
+{
+name:"Armor Games",
+icon:"⚔️",
+cat:"Game Hub",
+url:"https://armorgames.com/",
+desc:"Strategy and arcade games"
+},
+
+{
+name:"Y8",
+icon:"🎯",
+cat:"Game Hub",
+url:"https://www.y8.com/",
+desc:"Large browser-game archive"
+},
+
+{
+name:"Kongregate",
+icon:"👾",
+cat:"Game Hub",
+url:"https://www.kongregate.com/",
+desc:"Classic web games"
+},
+
+{
+name:"Miniclip",
+icon:"🏀",
+cat:"Game Hub",
+url:"https://www.miniclip.com/",
+desc:"Arcade and sports games"
+},
+
+{
+name:"Friv",
+icon:"🌈",
+cat:"Game Hub",
+url:"https://www.friv.com/",
+desc:"Casual game collection"
+},
+
+{
+name:"Agar.io",
+icon:"🟢",
+cat:"Multiplayer",
+url:"https://agar.io/",
+desc:"Eat cells and grow"
+},
+
+{
+name:"Slither.io",
+icon:"🐍",
+cat:"Multiplayer",
+url:"https://slither.io/",
+desc:"Snake multiplayer"
+},
+
+{
+name:"Shell Shockers",
+icon:"🥚",
+cat:"Multiplayer",
+url:"https://shellshock.io/",
+desc:"Egg-based browser shooter"
+},
+
+{
+name:"Diep.io",
+icon:"🔵",
+cat:"Multiplayer",
+url:"https://diep.io/",
+desc:"Tank arena"
+},
+
+{
+name:"Paper.io 2",
+icon:"📄",
+cat:"Multiplayer",
+url:"https://paper-io.com/",
+desc:"Claim territory"
+},
+
+{
+name:"Bloxd.io",
+icon:"🧱",
+cat:"Multiplayer",
+url:"https://bloxd.io/",
+desc:"Blocky multiplayer worlds"
+},
+
+{
+name:"TagPro",
+icon:"🏳️",
+cat:"Multiplayer",
+url:"https://tagpro.koalabeast.com/",
+desc:"Capture the flag"
+},
+
+{
+name:"Little Alchemy 2",
+icon:"🧪",
+cat:"Puzzle",
+url:"https://littlealchemy2.com/",
+desc:"Combine elements"
+},
+
+{
+name:"2048",
+icon:"🔢",
+cat:"Puzzle",
+url:"https://2048game.com/",
+desc:"Merge numbered tiles"
+},
+
+{
+name:"GeoGuessr",
+icon:"🌎",
+cat:"Puzzle",
+url:"https://www.geoguessr.com/",
+desc:"Guess locations"
+},
+
+{
+name:"Sudoku",
+icon:"🔢",
+cat:"Puzzle",
+url:"https://sudoku.com/",
+desc:"Number puzzle"
+},
+
+{
+name:"Nonogram",
+icon:"🧩",
+cat:"Puzzle",
+url:"https://www.nonograms.org/",
+desc:"Picture logic puzzles"
+},
+
+{
+name:"2048 Cupcakes",
+icon:"🧁",
+cat:"Puzzle",
+url:"https://www.crazygames.com/game/2048-cupcakes",
+desc:"Cupcake-themed 2048"
+},
+
+{
+name:"Minesweeper",
+icon:"💣",
+cat:"Puzzle",
+url:"https://minesweeper.online/",
+desc:"Clear the minefield"
+},
+
+{
+name:"Worldle",
+icon:"🗺️",
+cat:"Puzzle",
+url:"https://worldle.teuteuf.fr/",
+desc:"Guess the country"
+},
+
+{
+name:"Skribbl.io",
+icon:"✏️",
+cat:"Multiplayer",
+url:"https://skribbl.io/",
+desc:"Draw and guess"
+},
+
+{
+name:"Gartic Phone",
+icon:"📞",
+cat:"Multiplayer",
+url:"https://garticphone.com/",
+desc:"Telephone drawing game"
+},
+
+{
+name:"Chess.com",
+icon:"♟️",
+cat:"Puzzle",
+url:"https://www.chess.com/play",
+desc:"Online chess"
+},
+
+{
+name:"Lichess",
+icon:"♞",
+cat:"Puzzle",
+url:"https://lichess.org/",
+desc:"Free online chess"
+},
+
+{
+name:"TETR.IO",
+icon:"🟦",
+cat:"Puzzle",
+url:"https://tetr.io/",
+desc:"Competitive Tetris"
+},
+
+{
+name:"Tetris",
+icon:"🧱",
+cat:"Puzzle",
+url:"https://tetris.com/play-tetris",
+desc:"Classic Tetris"
+},
+
+{
+name:"Cookie Clicker",
+icon:"🍪",
+cat:"Fun",
+url:"https://orteil.dashnet.org/cookieclicker/",
+desc:"Make cookies"
+},
+
+{
+name:"Monkeytype",
+icon:"⌨️",
+cat:"Fun",
+url:"https://monkeytype.com/",
+desc:"Typing speed game"
+},
+
+{
+name:"TypeRacer",
+icon:"🏎️",
+cat:"Racing",
+url:"https://play.typeracer.com/",
+desc:"Race by typing"
+},
+
+{
+name:"Flappy Bird",
+icon:"🐦",
+cat:"Fun",
+url:"https://flappybird.io/",
+desc:"Classic-style flying game"
+},
+
+{
+name:"Pac-Man",
+icon:"👻",
+cat:"Fun",
+url:"https://www.google.com/search?q=Pac-Man+Google+Doodle",
+desc:"Classic maze game"
+},
+
+{
+name:"Solitaire",
+icon:"🃏",
+cat:"Puzzle",
+url:"https://www.solitr.com/",
+desc:"Classic solitaire"
+},
+
+{
+name:"Drift Hunters",
+icon:"🚗",
+cat:"Racing",
+url:"https://www.crazygames.com/game/drift-hunters",
+desc:"3D drifting"
+},
+
+{
+name:"Moto X3M",
+icon:"🏍️",
+cat:"Racing",
+url:"https://www.crazygames.com/game/moto-x3m",
+desc:"Bike obstacle course"
+},
+
+{
+name:"Smash Karts",
+icon:"💥",
+cat:"Racing",
+url:"https://www.crazygames.com/game/smash-karts",
+desc:"Kart battle"
+},
+
+{
+name:"Krunker",
+icon:"🔫",
+cat:"Multiplayer",
+url:"https://krunker.io/",
+desc:"Fast browser FPS"
+},
+
+{
+name:"1v1.LOL",
+icon:"🏗️",
+cat:"Multiplayer",
+url:"https://1v1.lol/",
+desc:"Build-and-battle shooter"
+},
+
+{
+name:"Neal.fun",
+icon:"✨",
+cat:"Fun",
+url:"https://neal.fun/",
+desc:"Interactive experiments"
+},
+
+{
+name:"The Useless Web",
+icon:"🌀",
+cat:"Fun",
+url:"https://theuselessweb.com/",
+desc:"Random silly websites"
+},
+
+{
+name:"Pointer Pointer",
+icon:"👉",
+cat:"Fun",
+url:"https://pointerpointer.com/",
+desc:"People point at your cursor"
+},
+
+{
+name:"Cat Bounce",
+icon:"🐈",
+cat:"Fun",
+url:"https://cat-bounce.com/",
+desc:"Bounce cats around"
+},
+
+{
+name:"Quick, Draw!",
+icon:"🎨",
+cat:"Fun",
+url:"https://quickdraw.withgoogle.com/",
+desc:"AI guessing game"
+},
+
+{
+name:"Radio Garden",
+icon:"🌍",
+cat:"Fun",
+url:"https://radio.garden/",
+desc:"Explore live radio"
+},
+
+{
+name:"Earth",
+icon:"🌎",
+cat:"Fun",
+url:"https://earth.google.com/web/",
+desc:"Explore Earth in 3D"
+},
+
+{
+name:"Chrome Music Lab",
+icon:"🎵",
+cat:"Fun",
+url:"https://musiclab.chromeexperiments.com/",
+desc:"Make music"
+}
 
 ];
 
-let filteredGames=games;
-let visible=60;
 
-function displayGames(){
+/* =========================
+   GAME SYSTEM
+========================= */
 
-const box=document.getElementById("games");
+const grid=document.getElementById("grid");
+const search=document.getElementById("search");
+const count=document.getElementById("count");
+const empty=document.getElementById("empty");
 
-box.innerHTML="";
+let category="All";
 
-filteredGames.slice(0,visible).forEach(game=>{
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-<h3>🎮 ${escapeHTML(game[0])}</h3>
-<p>${escapeHTML(game[2])}</p>
-<button class="play"
-onclick="window.open('${game[1]}','_blank')">
-PLAY
-</button>
-`;
-
-box.appendChild(card);
-
-});
-
-updateStats();
-
-}
-
-function loadMore(){
-
-visible+=60;
-displayGames();
-
-}
-
-function showAll(){
-
-filteredGames=games;
-visible=60;
-displayGames();
-
-}
-
-function filterCategory(category){
-
-filteredGames=games.filter(g=>g[2]===category);
-
-visible=60;
-displayGames();
-
-}
-
-document.getElementById("search").addEventListener("input",function(){
-
-const s=this.value.toLowerCase();
-
-filteredGames=games.filter(g=>
-g[0].toLowerCase().includes(s) ||
-g[2].toLowerCase().includes(s)
+let favorites=JSON.parse(
+localStorage.getItem("nathanFavorites")||"[]"
 );
 
-visible=60;
-displayGames();
+
+function render(){
+
+const q=search.value.toLowerCase().trim();
+
+const filtered=games.filter(g=>{
+
+const matchesQ=
+(g.name+" "+g.desc+" "+g.cat)
+.toLowerCase()
+.includes(q);
+
+const matchesCat=
+category==="All"
+?true
+:category==="Favorites"
+?favorites.includes(g.name)
+:g.cat===category;
+
+return matchesQ && matchesCat;
 
 });
 
-function randomGame(){
 
-const game=games[Math.floor(Math.random()*games.length)];
+grid.innerHTML=filtered.map(g=>`
 
-window.open(game[1],"_blank");
+<article class="card">
+
+<div class="icon">${g.icon}</div>
+
+<div class="name">
+${g.name}
+</div>
+
+<div class="desc">
+${g.desc}
+</div>
+
+<div class="row">
+
+<a
+class="play"
+href="${g.url}"
+target="_blank"
+rel="noopener noreferrer"
+>
+PLAY →
+</a>
+
+<button
+class="fav"
+onclick="toggleFav('${g.name.replace(/'/g,"\\'")}')"
+>
+${favorites.includes(g.name)?"⭐":"☆"}
+</button>
+
+</div>
+
+</article>
+
+`).join("");
+
+count.textContent=
+`${filtered.length} games`;
+
+empty.style.display=
+filtered.length?"none":"block";
 
 }
 
-function bored(){
 
-randomGame();
+function toggleFav(name){
+
+if(favorites.includes(name)){
+
+favorites=favorites.filter(x=>x!==name);
+
+}else{
+
+favorites.push(name);
+
+}
+
+localStorage.setItem(
+"nathanFavorites",
+JSON.stringify(favorites)
+);
+
+render();
 
 }
 
-function updateStats(){
 
-document.getElementById("stats").textContent=
-`${filteredGames.length} games and websites available`;
+document.querySelectorAll(".filter")
+.forEach(button=>{
 
-}
+button.addEventListener("click",()=>{
 
-function escapeHTML(text){
+document
+.querySelectorAll(".filter")
+.forEach(x=>x.classList.remove("active"));
 
-return text
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+button.classList.add("active");
 
-}
+category=button.dataset.cat;
+
+render();
+
+});
+
+});
+
+
+search.addEventListener("input",render);
+
+
+/* RANDOM GAME */
+
+document.getElementById("randomGame")
+.onclick=()=>{
+
+const game=
+games[Math.floor(Math.random()*games.length)];
+
+window.open(
+game.url,
+"_blank",
+"noopener,noreferrer"
+);
+
+};
+
+
+/* COIN */
+
+document.getElementById("coin")
+.onclick=()=>{
+
+document.getElementById("fortune")
+.textContent=
+Math.random()<.5
+?"Heads 🪙"
+:"Tails 🪙";
+
+};
+
+
+/* DICE */
+
+document.getElementById("dice")
+.onclick=()=>{
+
+document.getElementById("fortune")
+.textContent=
+"You rolled a "+
+(Math.floor(Math.random()*6)+1)+
+" 🎲";
+
+};
+
+
+/* FORTUNES */
+
+const fortunes=[
+
+"You are legally required to play one more game. 🔥",
+
+"Your next game is going to be suspiciously good.",
+
+"The RNG gods have noticed you. 🙏",
+
+"Today is a +10 luck day.",
+
+"You will discover a game you somehow missed.",
+
+"Something completely random is about to happen. 👀"
+
+];
+
+document.getElementById("fortuneBtn")
+.onclick=()=>{
+
+document.getElementById("fortune")
+.textContent=
+fortunes[
+Math.floor(Math.random()*fortunes.length)
+];
+
+};
 
 
 /* =========================
-   CALCULATOR
+   REAL AI
 ========================= */
 
-function calculate(){
+/*
+  CHANGE THIS TO YOUR CLOUDFLARE
+  WORKER URL.
+*/
 
-let input=document.getElementById("calcInput").value;
+const AI_BACKEND=
+"nathan-ai.n4822041.workers.dev";
+
+
+let aiHistory=[];
+
+
+function openAI(){
+
+document.getElementById("aiWindow")
+.style.display="block";
+
+document.getElementById("aiInput")
+.focus();
+
+}
+
+
+function closeAI(){
+
+document.getElementById("aiWindow")
+.style.display="none";
+
+}
+
+
+function addAIMessage(text,type){
+
+const box=
+document.getElementById("aiMessages");
+
+const message=
+document.createElement("div");
+
+message.className=
+"aiMessage "+type;
+
+message.textContent=text;
+
+box.appendChild(message);
+
+box.scrollTop=box.scrollHeight;
+
+}
+
+
+async function sendAI(){
+
+const input=
+document.getElementById("aiInput");
+
+const text=input.value.trim();
+
+if(!text)return;
+
+input.value="";
+
+addAIMessage(text,"user");
+
+aiHistory.push({
+role:"user",
+content:text
+});
+
+
+const thinking=
+document.createElement("div");
+
+thinking.className="aiMessage bot";
+
+thinking.textContent="🤔 Thinking...";
+
+document
+.getElementById("aiMessages")
+.appendChild(thinking);
+
 
 try{
 
-if(!/^[0-9+\-*/().% ]+$/.test(input)){
-throw new Error();
-}
+const response=await fetch(
+AI_BACKEND,
+{
+method:"POST",
 
-let result=Function('"use strict";return ('+input+')')();
+headers:{
+"Content-Type":"application/json"
+},
 
-document.getElementById("calcResult").textContent=result;
-
-}catch{
-
-document.getElementById("calcResult").textContent="❌ Invalid calculation";
-
-}
-
-}
-
-
-/* =========================
-   UNIT CONVERTER
-========================= */
-
-function convertUnit(){
-
-let v=parseFloat(document.getElementById("unitValue").value);
-
-if(isNaN(v))return;
-
-let type=document.getElementById("unitType").value;
-
-let r;
-
-if(type==="mft")r=v*3.28084;
-if(type==="ftm")r=v/3.28084;
-if(type==="kmmi")r=v*0.621371;
-if(type==="mileskm")r=v/0.621371;
-if(type==="kg")r=v*2.20462;
-if(type==="lb")r=v/2.20462;
-if(type==="cm")r=v/2.54;
-if(type==="inch")r=v*2.54;
-
-document.getElementById("unitResult").textContent=
-r.toFixed(4);
+body:JSON.stringify({
+messages:aiHistory
+})
 
 }
-
-
-/* =========================
-   TEMPERATURE
-========================= */
-
-function convertTemp(){
-
-let v=parseFloat(document.getElementById("tempValue").value);
-
-if(isNaN(v))return;
-
-let type=document.getElementById("tempType").value;
-
-let r=type==="cf"
-?v*9/5+32
-:(v-32)*5/9;
-
-document.getElementById("tempResult").textContent=
-r.toFixed(2)+"°";
-
-}
-
-
-/* =========================
-   TIMER
-========================= */
-
-let timerInterval=null;
-let timerSeconds=0;
-
-function updateTimer(){
-
-let m=Math.floor(timerSeconds/60);
-let s=timerSeconds%60;
-
-document.getElementById("timerDisplay").textContent=
-String(m).padStart(2,"0")+":"+
-String(s).padStart(2,"0");
-
-}
-
-function startTimer(){
-
-if(timerInterval)return;
-
-if(timerSeconds===0){
-
-let m=parseInt(document.getElementById("timerMinutes").value)||0;
-let s=parseInt(document.getElementById("timerSeconds").value)||0;
-
-timerSeconds=m*60+s;
-
-}
-
-timerInterval=setInterval(()=>{
-
-if(timerSeconds<=0){
-
-clearInterval(timerInterval);
-timerInterval=null;
-alert("⏰ Timer finished!");
-
-return;
-
-}
-
-timerSeconds--;
-updateTimer();
-
-},1000);
-
-updateTimer();
-
-}
-
-function pauseTimer(){
-
-clearInterval(timerInterval);
-timerInterval=null;
-
-}
-
-function resetTimer(){
-
-pauseTimer();
-
-timerSeconds=0;
-
-updateTimer();
-
-}
-
-
-/* =========================
-   STOPWATCH
-========================= */
-
-let stopwatchSeconds=0;
-let stopwatchInterval=null;
-
-function updateStopwatch(){
-
-let h=Math.floor(stopwatchSeconds/3600);
-let m=Math.floor((stopwatchSeconds%3600)/60);
-let s=stopwatchSeconds%60;
-
-document.getElementById("stopwatch").textContent=
-String(h).padStart(2,"0")+":"+
-String(m).padStart(2,"0")+":"+
-String(s).padStart(2,"0");
-
-}
-
-function startStopwatch(){
-
-if(stopwatchInterval)return;
-
-stopwatchInterval=setInterval(()=>{
-
-stopwatchSeconds++;
-updateStopwatch();
-
-},1000);
-
-}
-
-function stopStopwatch(){
-
-clearInterval(stopwatchInterval);
-stopwatchInterval=null;
-
-}
-
-function resetStopwatch(){
-
-stopStopwatch();
-
-stopwatchSeconds=0;
-
-updateStopwatch();
-
-}
-
-
-/* =========================
-   PASSWORD
-========================= */
-
-let currentPassword="";
-
-function generatePassword(){
-
-let length=parseInt(
-document.getElementById("passwordLength").value
-)||16;
-
-let chars=
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+
-"abcdefghijklmnopqrstuvwxyz"+
-"0123456789"+
-"!@#$%^&*()_+-=[]{}";
-
-currentPassword="";
-
-for(let i=0;i<length;i++){
-
-currentPassword+=
-chars[Math.floor(Math.random()*chars.length)];
-
-}
-
-document.getElementById("passwordResult").textContent=
-currentPassword;
-
-}
-
-function copyPassword(){
-
-if(!currentPassword)return;
-
-navigator.clipboard.writeText(currentPassword);
-
-}
-
-
-/* =========================
-   DICE
-========================= */
-
-function rollDice(){
-
-let sides=parseInt(
-document.getElementById("diceSides").value
 );
 
-let result=Math.floor(Math.random()*sides)+1;
 
-document.getElementById("diceResult").textContent=
-"🎲 "+result;
+if(!response.ok){
 
-}
-
-
-/* =========================
-   COIN
-========================= */
-
-function flipCoin(){
-
-let result=Math.random()<.5
-?"🟡 HEADS"
-:"⚪ TAILS";
-
-document.getElementById("coinResult").textContent=result;
-
-}
-
-
-/* =========================
-   RANDOM NUMBER
-========================= */
-
-function randomNumber(){
-
-let min=parseInt(document.getElementById("randomMin").value);
-let max=parseInt(document.getElementById("randomMax").value);
-
-if(isNaN(min)||isNaN(max))return;
-
-let result=Math.floor(Math.random()*(max-min+1))+min;
-
-document.getElementById("randomResult").textContent=result;
-
-}
-
-
-/* =========================
-   TEXT COUNTER
-========================= */
-
-function countText(){
-
-let text=document.getElementById("textCounter").value;
-
-let words=text.trim()
-?text.trim().split(/\s+/).length
-:0;
-
-let lines=text
-?text.split("\n").length
-:0;
-
-document.getElementById("textResult").innerHTML=
-`Characters: ${text.length}<br>
-Words: ${words}<br>
-Lines: ${lines}`;
-
-}
-
-
-/* =========================
-   CASE
-========================= */
-
-function upperCase(){
-
-let x=document.getElementById("caseText");
-
-x.value=x.value.toUpperCase();
-
-}
-
-function lowerCase(){
-
-let x=document.getElementById("caseText");
-
-x.value=x.value.toLowerCase();
-
-}
-
-function titleCase(){
-
-let x=document.getElementById("caseText");
-
-x.value=x.value.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
-
-}
-
-
-/* =========================
-   NOTES
-========================= */
-
-function saveNotes(){
-
-localStorage.setItem(
-"nathanNotes",
-document.getElementById("notes").value
+throw new Error(
+"AI server returned "+response.status
 );
 
-document.getElementById("notesStatus").textContent=
-"✅ Notes saved!";
-
-}
-
-function clearNotes(){
-
-document.getElementById("notes").value="";
-
-localStorage.removeItem("nathanNotes");
-
-document.getElementById("notesStatus").textContent=
-"Notes cleared.";
-
-}
-
-document.getElementById("notes").value=
-localStorage.getItem("nathanNotes")||"";
-
-
-/* =========================
-   COLOR
-========================= */
-
-function showColor(){
-
-let color=document.getElementById("colorPicker").value;
-
-document.getElementById("colorResult").textContent=
-color.toUpperCase();
-
-}
-
-function copyColor(){
-
-let color=document.getElementById("colorPicker").value;
-
-navigator.clipboard.writeText(color);
-
 }
 
 
-/* =========================
-   AGE
-========================= */
+const data=await response.json();
 
-function calculateAge(){
+thinking.remove();
 
-let date=new Date(
-document.getElementById("birthDate").value
-);
+const answer=
+data.reply||
+"Sorry, I couldn't generate a response.";
 
-if(isNaN(date))return;
 
-let today=new Date();
+addAIMessage(answer,"bot");
 
-let age=today.getFullYear()-date.getFullYear();
 
-let month=today.getMonth()-date.getMonth();
-
-if(
-month<0 ||
-(month===0 && today.getDate()<date.getDate())
-){
-
-age--;
-
-}
-
-document.getElementById("ageResult").textContent=
-"You are "+age+" years old.";
-
-}
-
-
-/* =========================
-   DISCOUNT
-========================= */
-
-function calculateDiscount(){
-
-let price=parseFloat(
-document.getElementById("originalPrice").value
-);
-
-let discount=parseFloat(
-document.getElementById("discount").value
-);
-
-if(isNaN(price)||isNaN(discount))return;
-
-let saved=price*discount/100;
-
-let finalPrice=price-saved;
-
-document.getElementById("discountResult").innerHTML=
-`You save: $${saved.toFixed(2)}<br>
-Final price: $${finalPrice.toFixed(2)}`;
-
-}
-
-
-/* =========================
-   TIP
-========================= */
-
-function calculateTip(){
-
-let bill=parseFloat(
-document.getElementById("bill").value
-);
-
-let percent=parseFloat(
-document.getElementById("tipPercent").value
-);
-
-if(isNaN(bill)||isNaN(percent))return;
-
-let tip=bill*percent/100;
-
-let total=bill+tip;
-
-document.getElementById("tipResult").innerHTML=
-`Tip: $${tip.toFixed(2)}<br>
-Total: $${total.toFixed(2)}`;
-
-}
-
-
-/* =========================
-   BMI
-========================= */
-
-function calculateBMI(){
-
-let weight=parseFloat(
-document.getElementById("weight").value
-);
-
-let height=parseFloat(
-document.getElementById("height").value
-);
-
-if(isNaN(weight)||isNaN(height)||height<=0)return;
-
-let bmi=weight/(height*height);
-
-document.getElementById("bmiResult").textContent=
-"BMI: "+bmi.toFixed(1);
-
-}
-
-
-/* =========================
-   DAYS BETWEEN
-========================= */
-
-function daysBetween(){
-
-let a=new Date(
-document.getElementById("date1").value
-);
-
-let b=new Date(
-document.getElementById("date2").value
-);
-
-if(isNaN(a)||isNaN(b))return;
-
-let difference=Math.abs(b-a);
-
-let days=Math.round(
-difference/(1000*60*60*24)
-);
-
-document.getElementById("dateResult").textContent=
-days+" days";
-
-}
-
-
-/* =========================
-   MEMES
-========================= */
-
-function openMemes(){
-
-document.getElementById("memePage").style.display="block";
-
-}
-
-function closeMemes(){
-
-document.getElementById("memePage").style.display="none";
-
-}
-
-
-/* =========================
-   MEME AUDIO
-========================= */
-
-let audioContext=null;
-
-function getAudio(){
-
-if(!audioContext){
-
-audioContext=
-new(window.AudioContext||window.webkitAudioContext)();
-
-}
-
-if(audioContext.state==="suspended"){
-audioContext.resume();
-}
-
-return audioContext;
-
-}
-
-function tone(freq,duration,type="sine",volume=.3){
-
-let ctx=getAudio();
-
-let osc=ctx.createOscillator();
-let gain=ctx.createGain();
-
-osc.type=type;
-osc.frequency.value=freq;
-
-gain.gain.setValueAtTime(
-volume,
-ctx.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-.001,
-ctx.currentTime+duration
-);
-
-osc.connect(gain);
-gain.connect(ctx.destination);
-
-osc.start();
-osc.stop(ctx.currentTime+duration);
-
-}
-
-
-/* VINE BOOM */
-
-function vineBoom(){
-
-let ctx=getAudio();
-
-let osc=ctx.createOscillator();
-let gain=ctx.createGain();
-
-osc.type="sine";
-
-osc.frequency.setValueAtTime(
-150,
-ctx.currentTime
-);
-
-osc.frequency.exponentialRampToValueAtTime(
-35,
-ctx.currentTime+.6
-);
-
-gain.gain.setValueAtTime(
-.9,
-ctx.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-.001,
-ctx.currentTime+.6
-);
-
-osc.connect(gain);
-gain.connect(ctx.destination);
-
-osc.start();
-osc.stop(ctx.currentTime+.6);
-
-}
-
-
-/* BRUH */
-
-function bruh(){
-
-tone(180,.2,"sawtooth",.3);
-
-setTimeout(()=>{
-tone(110,.5,"sawtooth",.3);
-},150);
-
-}
-
-
-/* AIRHORN */
-
-function airhorn(){
-
-tone(450,.4,"square",.3);
-
-setTimeout(()=>{
-tone(520,.4,"square",.3);
-},350);
-
-}
-
-
-/* BONK */
-
-function bonk(){
-
-tone(150,.12,"square",.45);
-
-setTimeout(()=>{
-tone(60,.3,"sine",.4);
-},80);
-
-}
-
-
-/* LAUGH */
-
-function laugh(){
-
-[500,650,500,700,450,600]
-.forEach((n,i)=>{
-
-setTimeout(()=>{
-tone(n,.12,"square",.2);
-},i*120);
-
+aiHistory.push({
+role:"assistant",
+content:answer
 });
 
-}
 
+}catch(error){
 
-/* WOW */
+thinking.textContent=
+"❌ AI connection failed.";
 
-function wow(){
-
-tone(350,.2,"sine",.25);
-
-setTimeout(()=>{
-tone(700,.5,"sine",.3);
-},150);
+console.error(error);
 
 }
-
-
-/* SAD */
-
-function sad(){
-
-tone(500,.35,"sine",.25);
-
-setTimeout(()=>{
-tone(350,.5,"sine",.25);
-},350);
 
 }
 
 
-/* ERROR */
+document.getElementById("aiInput")
+.addEventListener("keydown",event=>{
 
-function errorSound(){
+if(event.key==="Enter"){
 
-tone(100,.12,"square",.35);
+sendAI();
 
-setTimeout(()=>{
-tone(80,.12,"square",.35);
-},150);
-
-setTimeout(()=>{
-tone(55,.35,"square",.35);
-},300);
-
-}
-
-
-/* POP */
-
-function pop(){
-
-tone(800,.15,"sine",.5);
-
-}
-
-
-/* BASS */
-
-function bass(){
-
-let ctx=getAudio();
-
-let osc=ctx.createOscillator();
-let gain=ctx.createGain();
-
-osc.type="sawtooth";
-
-osc.frequency.setValueAtTime(
-180,
-ctx.currentTime
-);
-
-osc.frequency.exponentialRampToValueAtTime(
-30,
-ctx.currentTime+1
-);
-
-gain.gain.setValueAtTime(
-.5,
-ctx.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-.001,
-ctx.currentTime+1
-);
-
-osc.connect(gain);
-gain.connect(ctx.destination);
-
-osc.start();
-osc.stop(ctx.currentTime+1);
-
-}
-
-
-function playSound(sound){
-
-if(sound==="vine")vineBoom();
-if(sound==="bruh")bruh();
-if(sound==="airhorn")airhorn();
-if(sound==="bonk")bonk();
-if(sound==="laugh")laugh();
-if(sound==="wow")wow();
-if(sound==="sad")sad();
-if(sound==="error")errorSound();
-if(sound==="pop")pop();
-if(sound==="bass")bass();
-
-}
-
-
-document.addEventListener("keydown",e=>{
-
-if(e.key==="Escape"){
-closeMemes();
 }
 
 });
 
 
-/* START */
-
-displayGames();
+render();
 
 </script>
 
