@@ -184,6 +184,33 @@ main{
   color:var(--text);
 }
 
+.pointsEarned{
+  color:#ffd43b;
+}
+
+.pointsPopup{
+  position:fixed;
+  right:22px;
+  top:82px;
+  z-index:120;
+  padding:12px 16px;
+  border:1px solid rgba(255,212,59,.45);
+  border-radius:14px;
+  background:var(--panel);
+  color:var(--text);
+  box-shadow:var(--shadow);
+  font-weight:800;
+  pointer-events:none;
+  animation:pointsPop 1.8s ease forwards;
+}
+
+@keyframes pointsPop{
+  0%{opacity:0;transform:translateY(-10px) scale(.96)}
+  15%{opacity:1;transform:translateY(0) scale(1)}
+  75%{opacity:1}
+  100%{opacity:0;transform:translateY(-18px) scale(.98)}
+}
+
 .warning{
   margin:15px 0 30px;
   padding:15px 17px;
@@ -494,6 +521,26 @@ footer{
   border-top:1px solid var(--border);
 }
 
+
+/* WHEEL */
+.wheelWrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+#wheelCanvas{width:min(340px,82vw);height:min(340px,82vw);border-radius:50%;max-width:340px;max-height:340px}
+.wheelPointer{font-size:28px;line-height:20px;transform:rotate(180deg);margin-bottom:-12px;z-index:2}
+.wheelResult{font-size:18px;font-weight:900;text-align:center;min-height:28px}
+.wheelInputs{display:flex;flex-direction:column;gap:8px;width:100%}
+.wheelInputs textarea{width:100%;min-height:150px;resize:vertical;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);outline:none}
+.wheelButtons{display:flex;gap:8px;width:100%}
+.wheelButtons button{flex:1}
+.themeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.themeBtn{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);color:var(--text);font-weight:700}
+.themeBtn.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,92,255,.18)}
+body.theme-ocean{--accent:#00a8ff;--accent2:#00e5ff}
+body.theme-sunset{--accent:#ff5e7a;--accent2:#ffb347}
+body.theme-forest{--accent:#20c77a;--accent2:#a8e063}
+body.theme-pink{--accent:#ff4fb3;--accent2:#b56cff}
+body.theme-mono{--accent:#e7e7e7;--accent2:#8f8f8f}
+body.theme-mono .gradient{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text}
+
 @media(max-width:750px){
   .nav{
     flex-wrap:wrap;
@@ -569,6 +616,7 @@ footer{
       <div class="stat">🌐 <b id="siteCount">0</b> Websites</div>
       <div class="stat">⭐ <b id="favCount">0</b> Favorites</div>
       <div class="stat">📦 <b id="totalCount">0</b> Total Entries</div>
+      <div class="stat">🪙 <b id="pointsCount">0</b> Game Points</div>
     </div>
   </section>
 
@@ -585,6 +633,7 @@ footer{
     <button class="category" data-cat="favorites">⭐ Favorites</button>
     <button class="category" onclick="randomEntry()">🎲 Random</button>
     <button class="category" onclick="openPanel('sounds')">🔊 Soundboard</button>
+    <button class="category" onclick="openPanel('wheel')">🎡 Spin the Wheel</button>
   </div>
 
   <section class="section" id="gamesSection">
@@ -689,6 +738,38 @@ footer{
   </div>
 </div>
 
+
+<!-- SPIN THE WHEEL -->
+<div class="panel" id="wheel">
+  <div class="panelHead">
+    <h2>🎡 Spin the Wheel</h2>
+    <button class="close" onclick="closePanels()">✕</button>
+  </div>
+  <div class="toolBox">
+    <div class="wheelWrap">
+      <div class="wheelPointer">▼</div>
+      <canvas id="wheelCanvas" width="700" height="700" aria-label="Spin wheel"></canvas>
+      <div class="wheelResult" id="wheelResult">Add names, then spin!</div>
+      <div class="wheelInputs">
+        <label for="wheelNames"><b>Names / choices</b></label>
+        <textarea id="wheelNames" placeholder="Nathan\nAlex\nRoblox\nMinecraft\nFortnite">Nathan
+Alex
+Roblox
+Minecraft
+Fortnite</textarea>
+      </div>
+      <div class="wheelButtons">
+        <button class="smallBtn" type="button" onclick="shuffleWheelNames()">🔀 Shuffle</button>
+        <button class="play" type="button" onclick="spinWheel()">🎡 SPIN!</button>
+      </div>
+    </div>
+  </div>
+  <div class="toolBox">
+    <b>How it works</b>
+    <p style="color:var(--muted);line-height:1.6;margin-bottom:0">Put one choice on each line. The wheel randomly picks one when you spin it.</p>
+  </div>
+</div>
+
 <!-- AI -->
 <div class="panel" id="ai">
   <div class="panelHead">
@@ -724,6 +805,18 @@ footer{
   <div class="toolBox">
 
     <div class="settingRow">
+      <span>🎨 UI Theme</span>
+      <select id="themeSelect" onchange="setTheme(this.value)" style="padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text)">
+        <option value="purple">Purple Neon</option>
+        <option value="ocean">Ocean</option>
+        <option value="sunset">Sunset</option>
+        <option value="forest">Forest</option>
+        <option value="pink">Pink</option>
+        <option value="mono">Monochrome</option>
+      </select>
+    </div>
+
+    <div class="settingRow">
       <span>🌙 Dark Mode</span>
       <input id="darkToggle" type="checkbox" checked onchange="toggleTheme()">
     </div>
@@ -741,6 +834,27 @@ footer{
     <div class="settingRow">
       <span>🎲 Random Game</span>
       <button class="smallBtn" onclick="randomGame()">Play</button>
+    </div>
+
+    <div class="settingRow">
+      <span>🪙 Game Points</span>
+      <b id="settingsPoints">0</b>
+    </div>
+
+    <div class="settingRow">
+      <span>🔥 Daily Streak</span>
+      <b id="streakCount">0 days</b>
+    </div>
+
+    <div class="settingRow">
+      <span>📅 Daily Reward</span>
+      <span id="dailyRewardText">Claimed today</span>
+    </div>
+
+    <div style="margin-top:14px;color:var(--muted);line-height:1.6">
+      Earn <b>+25 points</b> for visiting once each day and
+      <b>+10 points</b> whenever you start a game from the hub.
+      Your points and streak are saved in this browser.
     </div>
 
   </div>
@@ -1955,8 +2069,97 @@ document.getElementById("siteCount").textContent = sites.length;
 document.getElementById("totalCount").textContent = TOTAL;
 
 /* -------------------------------------------------------
+   GAME POINTS
+   ------------------------------------------------------- */
+
+const POINTS_PER_GAME = 10;
+const DAILY_POINTS = 25;
+
+let gamePoints = Number(localStorage.getItem("nathanGamePoints") || 0);
+let lastVisitDate = localStorage.getItem("nathanLastVisitDate") || "";
+let dailyStreak = Number(localStorage.getItem("nathanDailyStreak") || 0);
+
+function localDateKey(date = new Date()){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,"0");
+  const d = String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+
+function previousDateKey(){
+  const d = new Date();
+  d.setDate(d.getDate()-1);
+  return localDateKey(d);
+}
+
+function savePoints(){
+  localStorage.setItem("nathanGamePoints",String(gamePoints));
+  localStorage.setItem("nathanLastVisitDate",lastVisitDate);
+  localStorage.setItem("nathanDailyStreak",String(dailyStreak));
+  updatePointsUI();
+}
+
+function updatePointsUI(){
+  const points = document.getElementById("pointsCount");
+  const settingsPoints = document.getElementById("settingsPoints");
+  const streak = document.getElementById("streakCount");
+  const reward = document.getElementById("dailyRewardText");
+
+  if(points) points.textContent = gamePoints;
+  if(settingsPoints) settingsPoints.textContent = gamePoints;
+  if(streak) streak.textContent = `${dailyStreak} day${dailyStreak === 1 ? "" : "s"}`;
+
+  if(reward){
+    reward.textContent = lastVisitDate === localDateKey()
+      ? "Claimed today"
+      : `Available: +${DAILY_POINTS}`;
+  }
+}
+
+function showPointsPopup(amount,reason){
+  const old = document.querySelector(".pointsPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.className = "pointsPopup";
+  popup.textContent = `🪙 +${amount} points — ${reason}`;
+  document.body.appendChild(popup);
+
+  setTimeout(()=>popup.remove(),1800);
+}
+
+function claimDailyVisit(){
+  const today = localDateKey();
+
+  if(lastVisitDate === today){
+    updatePointsUI();
+    return;
+  }
+
+  if(lastVisitDate === previousDateKey()){
+    dailyStreak++;
+  }else{
+    dailyStreak = 1;
+  }
+
+  gamePoints += DAILY_POINTS;
+  lastVisitDate = today;
+  savePoints();
+  showPointsPopup(DAILY_POINTS, `Daily visit • ${dailyStreak}-day streak`);
+}
+
+function awardGamePoints(name){
+  gamePoints += POINTS_PER_GAME;
+  savePoints();
+  showPointsPopup(POINTS_PER_GAME, `Played ${name}`);
+}
+
+claimDailyVisit();
+
+/* -------------------------------------------------------
    FAVORITES
    ------------------------------------------------------- */
+
 
 let favorites = JSON.parse(localStorage.getItem("nathanFavorites") || "[]");
 
@@ -2058,8 +2261,85 @@ function faviconFor(name){
    ------------------------------------------------------- */
 
 function gameURL(name){
-  return "https://www.google.com/search?q=" +
-    encodeURIComponent(name + " browser game");
+  const direct = {
+    "1v1.LOL":"https://1v1.lol/",
+    "2048":"https://play2048.co/",
+    "Agario":"https://agar.io/",
+    "Agar.io":"https://agar.io/",
+    "BitLife":"https://bitlifeonline.github.io/",
+    "Chrome Dino":"https://chromedino.com/",
+    "Cookie Clicker":"https://orteil.dashnet.org/cookieclicker/",
+    "Crossy Road":"https://poki.com/en/g/crossy-road",
+    "Cut the Rope":"https://poki.com/en/g/cut-the-rope",
+    "Death Run 3D":"https://poki.com/en/g/death-run-3d",
+    "Drift Hunters":"https://poki.com/en/g/drift-hunters",
+    "Drive Mad":"https://poki.com/en/g/drive-mad",
+    "Duck Life":"https://www.coolmathgames.com/0-duck-life",
+    "Duck Life 2":"https://www.coolmathgames.com/0-duck-life-2",
+    "Duck Life 3":"https://www.coolmathgames.com/0-duck-life-3",
+    "Duck Life 4":"https://www.coolmathgames.com/0-duck-life-4",
+    "Earn to Die":"https://www.coolmathgames.com/0-earn-to-die",
+    "Earn to Die 2":"https://www.coolmathgames.com/0-earn-to-die-2",
+    "Fireboy and Watergirl":"https://www.coolmathgames.com/0-fireboy-and-water-girl-in-the-forest-temple",
+    "Fireboy Watergirl Light Temple":"https://www.coolmathgames.com/0-fireboy-and-water-girl-in-the-forest-temple",
+    "Flappy Bird":"https://flappybird.io/",
+    "Geometry Dash":"https://poki.com/en/g/geometry-dash-online",
+    "Getting Over It":"https://www.crazygames.com/game/getting-over-it",
+    "Gold Miner":"https://www.crazygames.com/game/gold-miner",
+    "Happy Wheels":"https://totaljerkface.com/happy_wheels.tjf",
+    "Helix Jump":"https://poki.com/en/g/helix-jump",
+    "Hole.io":"https://poki.com/en/g/hole-io",
+    "Idle Breakout":"https://www.coolmathgames.com/0-idle-breakout",
+    "Jetpack Joyride":"https://poki.com/en/g/jetpack-joyride",
+    "Little Alchemy":"https://littlealchemy.com/",
+    "Little Alchemy 2":"https://littlealchemy2.com/",
+    "Madalin Stunt Cars 2":"https://www.crazygames.com/game/madalin-stunt-cars-2",
+    "Madalin Stunt Cars 3":"https://www.crazygames.com/game/madalin-stunt-cars-3",
+    "Minecraft Classic":"https://classic.minecraft.net/",
+    "Monkey Mart":"https://www.crazygames.com/game/monkey-mart",
+    "Moto X3M":"https://www.crazygames.com/game/moto-x3m",
+    "Paper.io":"https://paper-io.com/",
+    "Paper.io 2":"https://paper-io.com/",
+    "Raft Wars":"https://www.crazygames.com/game/raft-wars",
+    "Red Ball":"https://www.coolmathgames.com/0-red-ball",
+    "Red Ball 2":"https://www.coolmathgames.com/0-red-ball-2",
+    "Red Ball 3":"https://www.coolmathgames.com/0-red-ball-3",
+    "Red Ball 4":"https://www.coolmathgames.com/0-red-ball-4",
+    "Run 1":"https://www.coolmathgames.com/0-run",
+    "Run 2":"https://www.coolmathgames.com/0-run-2",
+    "Run 3":"https://www.coolmathgames.com/0-run-3",
+    "Rooftop Snipers":"https://www.crazygames.com/game/rooftop-snipers",
+    "Slither.io":"https://slither.io/",
+    "Snow Rider 3D":"https://poki.com/en/g/snow-rider-3d",
+    "Soccer Random":"https://poki.com/en/g/soccer-random",
+    "Stickman Hook":"https://poki.com/en/g/stickman-hook",
+    "Super Auto Pets":"https://teamwoodgames.com/",
+    "Tank Trouble":"https://www.crazygames.com/game/tank-trouble",
+    "Tank Trouble 2":"https://www.crazygames.com/game/tank-trouble-2",
+    "Temple Run 2":"https://poki.com/en/g/temple-run-2",
+    "The Impossible Quiz":"https://www.coolmathgames.com/0-the-impossible-quiz",
+    "The World's Hardest Game":"https://www.coolmathgames.com/0-worlds-hardest-game",
+    "Time Shooter":"https://www.crazygames.com/game/time-shooter",
+    "Time Shooter 2":"https://www.crazygames.com/game/time-shooter-2",
+    "Time Shooter 3":"https://www.crazygames.com/game/time-shooter-3",
+    "Tiny Fishing":"https://poki.com/en/g/tiny-fishing",
+    "Townscaper":"https://oskarstalberg.com/Townscaper/",
+    "Vex":"https://www.crazygames.com/game/vex",
+    "Vex 2":"https://www.crazygames.com/game/vex-2",
+    "Vex 3":"https://www.crazygames.com/game/vex-3",
+    "Vex 4":"https://www.crazygames.com/game/vex-4",
+    "Vex 5":"https://www.crazygames.com/game/vex-5",
+    "Vex 6":"https://www.crazygames.com/game/vex-6",
+    "Vex 7":"https://www.crazygames.com/game/vex-7",
+    "Vex 8":"https://www.crazygames.com/game/vex-8",
+    "World's Biggest Pac-Man":"https://worldsbiggestpacman.com/",
+    "Zombs Royale":"https://zombsroyale.io/"
+  };
+
+  if(direct[name]) return direct[name];
+
+  // Unknown entries go to the browser-game platform, NOT Google.
+  return "https://www.crazygames.com/search?q=" + encodeURIComponent(name);
 }
 
 function siteURL(name){
@@ -2147,7 +2427,7 @@ function siteURL(name){
 
   if(known[name]) return known[name];
 
-  return "https://www.google.com/search?q=" + encodeURIComponent(name);
+  return "https://www.crazygames.com/";
 }
 
 /* -------------------------------------------------------
@@ -2286,6 +2566,10 @@ function openEntry(name,type){
   let url = type === "game"
     ? gameURL(name)
     : siteURL(name);
+
+  if(type === "game"){
+    awardGamePoints(name);
+  }
 
   window.open(url,"_blank","noopener,noreferrer");
 }
@@ -2695,12 +2979,113 @@ document.addEventListener("keydown",e=>{
    ------------------------------------------------------- */
 
 updateFavoriteCount();
+updatePointsUI();
 render();
 
 console.log("Nathan's Game Hub loaded successfully.");
 console.log("Games:",games.length);
 console.log("Websites:",sites.length);
 console.log("Total:",TOTAL);
+
+
+
+/* -------------------------
+   UI THEMES
+   ------------------------- */
+const savedTheme = localStorage.getItem("nathanTheme") || "purple";
+function setTheme(theme){
+  const allowed=["purple","ocean","sunset","forest","pink","mono"];
+  if(!allowed.includes(theme)) theme="purple";
+  document.body.classList.remove("theme-ocean","theme-sunset","theme-forest","theme-pink","theme-mono");
+  if(theme !== "purple") document.body.classList.add("theme-"+theme);
+  localStorage.setItem("nathanTheme",theme);
+  const select=document.getElementById("themeSelect");
+  if(select) select.value=theme;
+}
+setTheme(savedTheme);
+
+/* -------------------------
+   SPIN THE WHEEL
+   ------------------------- */
+let wheelRotation=0;
+let wheelSpinning=false;
+let wheelChoices=[];
+
+function getWheelChoices(){
+  const box=document.getElementById("wheelNames");
+  if(!box) return [];
+  return box.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,100);
+}
+
+function drawWheel(rotation=wheelRotation){
+  const canvas=document.getElementById("wheelCanvas");
+  if(!canvas) return;
+  const ctx=canvas.getContext("2d");
+  const dpr=window.devicePixelRatio||1;
+  const cssSize=Math.min(340,Math.max(220,canvas.parentElement?.clientWidth||340));
+  if(canvas.width !== Math.round(cssSize*dpr)){canvas.width=Math.round(cssSize*dpr);canvas.height=Math.round(cssSize*dpr);}
+  const w=canvas.width/dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,w);
+  const choices=getWheelChoices();
+  if(!choices.length){ctx.beginPath();ctx.arc(w/2,w/2,w/2-8,0,Math.PI*2);ctx.fillStyle="#252a39";ctx.fill();return;}
+  const cx=w/2,cy=w/2,r=w/2-10;
+  const colors=["#7c5cff","#00b8d9","#ff5e7a","#20c77a","#ffb347","#b56cff","#4f9cff","#e063a6"];
+  const slice=Math.PI*2/choices.length;
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(rotation);
+  choices.forEach((name,i)=>{
+    const a=-Math.PI/2+i*slice;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,a,a+slice);ctx.closePath();
+    ctx.fillStyle=colors[i%colors.length];ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,.35)";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.rotate(a+slice/2);ctx.textAlign="right";ctx.fillStyle="#fff";ctx.font=`700 ${Math.max(11,Math.min(22,18-choices.length/8))}px Arial`;
+    const label=name.length>22?name.slice(0,21)+"…":name;ctx.fillText(label,r-18,6);ctx.restore();
+  });
+  ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,27,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.strokeStyle="#222";ctx.lineWidth=3;ctx.stroke();
+}
+
+function spinWheel(){
+  if(wheelSpinning) return;
+  wheelChoices=getWheelChoices();
+  const result=document.getElementById("wheelResult");
+  if(wheelChoices.length<2){result.textContent="Add at least 2 choices first.";return;}
+  wheelSpinning=true;
+  result.textContent="Spinning…";
+  const count=wheelChoices.length;
+  const slice=2*Math.PI/count;
+  const winner=Math.floor(Math.random()*count);
+  const target=-winner*slice-slice/2-Math.PI/2;
+  const start=wheelRotation;
+  const turns=6+Math.floor(Math.random()*3);
+  const end=start+turns*2*Math.PI+((target-start)%(2*Math.PI));
+  const duration=3600;
+  const t0=performance.now();
+  function frame(now){
+    const t=Math.min(1,(now-t0)/duration);
+    const eased=1-Math.pow(1-t,4);
+    wheelRotation=start+(end-start)*eased;
+    drawWheel(wheelRotation);
+    if(t<1){requestAnimationFrame(frame);return;}
+    wheelSpinning=false;
+    result.textContent="🎉 Winner: "+wheelChoices[winner];
+  }
+  requestAnimationFrame(frame);
+}
+
+function shuffleWheelNames(){
+  const box=document.getElementById("wheelNames");
+  if(!box) return;
+  const a=getWheelChoices();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  box.value=a.join("\n");
+  drawWheel();
+  document.getElementById("wheelResult").textContent="Choices shuffled!";
+}
+
+document.getElementById("wheelNames")?.addEventListener("input",()=>{if(!wheelSpinning){drawWheel();document.getElementById("wheelResult").textContent="Ready to spin!";}});
+window.addEventListener("resize",()=>drawWheel());
+setTimeout(()=>drawWheel(),0);
 
 </script>
 
